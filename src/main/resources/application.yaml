@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Gachi-Sanchaek
+  config:
+    import:
+      - classpath:config/h2.yaml
+#      - classpath:config/mysql.yaml
+      - classpath:config/env.yaml
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        show_sql: true
+#        format_sql: true
