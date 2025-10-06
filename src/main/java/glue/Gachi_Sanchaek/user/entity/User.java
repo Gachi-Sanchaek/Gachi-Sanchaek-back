@@ -1,6 +1,7 @@
 package glue.Gachi_Sanchaek.user.entity;
 
 
+import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -54,6 +55,12 @@ public class User {
 
     @Column(name = "walking_count", nullable = false)
     private Long walkingCount = 0L;
+
+    public User(UserJoinDto userJoinDto) {
+        this.kakaoId = userJoinDto.getKakaoId();
+        this.email = userJoinDto.getEmail();
+        this.nickname = userJoinDto.getUsername();
+    }
 
 }
 
