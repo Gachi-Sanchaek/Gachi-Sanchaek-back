@@ -1,14 +1,18 @@
 package glue.Gachi_Sanchaek.user.entity;
 
 
+import glue.Gachi_Sanchaek.stamp.entity.Stamp;
 import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +53,9 @@ public class User {
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Stamp> stamps;
 
     @Column(name = "total_points", nullable = false)
     private Long totalPoints = 0L;
