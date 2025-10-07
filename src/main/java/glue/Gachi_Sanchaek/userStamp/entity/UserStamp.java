@@ -1,4 +1,4 @@
-package glue.Gachi_Sanchaek.stamp.entity;
+package glue.Gachi_Sanchaek.userStamp.entity;
 
 import glue.Gachi_Sanchaek.user.entity.User;
 import jakarta.persistence.Column;
@@ -26,7 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Stamp {
+public class UserStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,11 +1,10 @@
 package glue.Gachi_Sanchaek.user.entity;
 
 
-import glue.Gachi_Sanchaek.stamp.entity.Stamp;
+import glue.Gachi_Sanchaek.userStamp.entity.UserStamp;
 import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "users")
@@ -55,7 +53,7 @@ public class User {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
-    private List<Stamp> stamps;
+    private List<UserStamp> userStamps;
 
     @Column(name = "total_points", nullable = false)
     private Long totalPoints = 0L;
