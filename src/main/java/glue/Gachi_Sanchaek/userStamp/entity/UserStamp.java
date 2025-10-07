@@ -45,4 +45,9 @@ public class UserStamp {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public UserStamp(User user, Stamp stamp) {
+        this.user = user;
+        this.stamp = stamp;
+    }
+
 }
