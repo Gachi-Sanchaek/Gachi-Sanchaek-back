@@ -13,10 +13,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public UserResponseDto findById(Long id){
+    public User findById(Long id){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. id=" + id));
-        return new UserResponseDto(user);
+                .orElseThrow(() -> new IllegalArgumentException("User not Found. id = " + id));
+        return user;
     }
 
     @Transactional
