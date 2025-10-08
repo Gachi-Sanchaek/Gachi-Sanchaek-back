@@ -13,3 +13,8 @@ spring:
       hibernate:
 #        show_sql: true
 #        format_sql: true
+
+kakao:
+  api:
+    key: ede968322c3e4dc3bf4dd53f58a54f1f
+    base-url: "https://dapi.kakao.com"

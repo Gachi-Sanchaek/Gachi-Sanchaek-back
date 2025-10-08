@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GachiSanchaekApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GachiSanchaekApplication.class, args);
+
+        SpringApplication.run(GachiSanchaekApplication.class, args);
 	}
 
 }
