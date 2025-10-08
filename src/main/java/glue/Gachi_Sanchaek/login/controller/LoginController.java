@@ -1,22 +1,17 @@
-package glue.Gachi_Sanchaek.user.controller;
+package glue.Gachi_Sanchaek.login.controller;
 
 
-import glue.Gachi_Sanchaek.user.dto.KakaoUserInfoResponseDto;
+import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
 import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
-import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
-import glue.Gachi_Sanchaek.user.dto.UserResponseDto;
+import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.service.KakaoLoginService;
-import glue.Gachi_Sanchaek.user.service.LoginService;
+import glue.Gachi_Sanchaek.login.service.KakaoLoginService;
+import glue.Gachi_Sanchaek.login.service.LoginService;
 import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.util.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import javax.naming.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

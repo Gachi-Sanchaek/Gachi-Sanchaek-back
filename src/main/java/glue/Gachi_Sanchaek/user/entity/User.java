@@ -2,7 +2,7 @@ package glue.Gachi_Sanchaek.user.entity;
 
 
 import glue.Gachi_Sanchaek.userStamp.entity.UserStamp;
-import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
+import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

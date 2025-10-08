@@ -1,12 +1,10 @@
-package glue.Gachi_Sanchaek.user.service;
+package glue.Gachi_Sanchaek.login.service;
 
 
 import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
-import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
-import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
+import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
