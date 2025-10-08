@@ -23,4 +23,8 @@ public class UserService {
     public void delete(Long id){
         userRepository.deleteById(id);
     }
+
+    public boolean isAvailableNickname(String nickname){
+        return userRepository.existsByNickname(nickname);
+    }
 }
