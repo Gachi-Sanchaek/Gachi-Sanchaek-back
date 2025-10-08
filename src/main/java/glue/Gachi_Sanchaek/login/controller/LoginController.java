@@ -40,6 +40,7 @@ public class LoginController {
         LoginResponseDto loginResponseDto = new LoginResponseDto(isNewUser, user.getNickname());
 
         String accessToken = loginService.createToken(user.getId(), user.getRole());
+        System.out.println("accessToken = " + accessToken);
         String refreshToken = loginService.createRefreshToken(user.getId());
         return ApiResponse.okWithAuthHeader(loginResponseDto, accessToken, refreshToken);
     }

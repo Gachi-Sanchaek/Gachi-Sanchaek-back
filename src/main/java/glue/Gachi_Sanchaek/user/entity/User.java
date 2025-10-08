@@ -48,6 +48,9 @@ public class User {
     @Column(nullable = false)
     private String role = "USER";
 
+    @Column(nullable = false)
+    private String gender = "NONE";
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
