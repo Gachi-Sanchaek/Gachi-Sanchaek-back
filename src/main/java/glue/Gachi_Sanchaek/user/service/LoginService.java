@@ -2,14 +2,13 @@ package glue.Gachi_Sanchaek.user.service;
 
 
 import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
+import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
-import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,18 +23,13 @@ public class LoginService {
 
     private final String REFRESH_TOKEN_PREFIX = "refresh:";
 
+    public User findByKakaoId(Long kakaoId){
+        return userRepository.findByKakaoId(kakaoId).orElse(null);
+    }
+
     public User joinProcess(UserJoinDto joinDTO, String role) {
-
-        Long kakaoId = joinDTO.getKakaoId();
-        Optional<User> OptionalUser = userRepository.findByKakaoId(kakaoId);
-
-        if (OptionalUser.isPresent()) {
-            return OptionalUser.get();
-        }
-
         User user = new User(joinDTO);
         user.setRole(role);
-
         return userRepository.save(user);
     }
 

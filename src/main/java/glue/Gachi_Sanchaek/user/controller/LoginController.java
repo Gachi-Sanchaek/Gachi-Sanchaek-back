@@ -2,6 +2,7 @@ package glue.Gachi_Sanchaek.user.controller;
 
 
 import glue.Gachi_Sanchaek.user.dto.KakaoUserInfoResponseDto;
+import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.user.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.dto.UserResponseDto;
 import glue.Gachi_Sanchaek.user.entity.User;
@@ -30,14 +31,22 @@ public class LoginController {
     private final UserService userService;
 
     @GetMapping("/kakao/login")
-    public ResponseEntity<ApiResponse<Void>> callback(@RequestParam("code") String code) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> callback(@RequestParam("code") String code) {
         String kakaoAccessToken = kakaoLoginService.getAccessTokenFromKakao(code);
         KakaoUserInfoResponseDto userInfo = kakaoLoginService.getUserInfo(kakaoAccessToken); //카카오 유저 정보
 
-        User user = loginService.joinProcess(new UserJoinDto(userInfo), "USER");
+        User user = loginService.findByKakaoId(userInfo.getId());
+        boolean isNewUser = false;
+        if(user == null){ //신규 회원
+            isNewUser = true;
+            user = loginService.joinProcess(new UserJoinDto(userInfo),"USER");
+        }
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(isNewUser, user.getNickname());
+
         String accessToken = loginService.createToken(user.getId(), user.getRole());
         String refreshToken = loginService.createRefreshToken(user.getId());
-        return ApiResponse.okWithAuthHeader(null, accessToken, refreshToken);
+        return ApiResponse.okWithAuthHeader(loginResponseDto, accessToken, refreshToken);
     }
 
 //    @PostMapping("/refresh")
