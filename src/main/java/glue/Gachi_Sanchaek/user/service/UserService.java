@@ -2,6 +2,7 @@ package glue.Gachi_Sanchaek.user.service;
 
 import glue.Gachi_Sanchaek.user.dto.UserJoinRequestDto;
 import glue.Gachi_Sanchaek.user.dto.UserResponseDto;
+import glue.Gachi_Sanchaek.user.dto.UserUpdateRequestDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,18 @@ public class UserService {
         return userRepository.existsByNickname(nickname);
     }
 
-    public User update(Long userId, UserJoinRequestDto userJoinRequestDto){
+    public User join(Long userId, UserJoinRequestDto userJoinRequestDto){
         User user = findById(userId);
         user.setNickname(userJoinRequestDto.getNickname());
         user.setGender(userJoinRequestDto.getGender());
         return userRepository.save(user);
+    }
+
+
+    public User update(Long id, UserUpdateRequestDto requestDto) {
+        User user = findById(id);
+        user.setNickname(requestDto.getNickname());
+        user.setProfileImageUrl(requestDto.getProfileImageUrl());
+        return null;
     }
 }
