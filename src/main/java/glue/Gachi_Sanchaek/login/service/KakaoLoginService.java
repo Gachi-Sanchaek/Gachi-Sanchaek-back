@@ -1,7 +1,7 @@
-package glue.Gachi_Sanchaek.user.service;
+package glue.Gachi_Sanchaek.login.service;
 
-import glue.Gachi_Sanchaek.user.dto.KakaoTokenResponseDto;
-import glue.Gachi_Sanchaek.user.dto.KakaoUserInfoResponseDto;
+import glue.Gachi_Sanchaek.login.dto.KakaoTokenResponseDto;
+import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

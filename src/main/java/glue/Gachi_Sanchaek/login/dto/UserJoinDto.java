@@ -1,4 +1,4 @@
-package glue.Gachi_Sanchaek.user.dto;
+package glue.Gachi_Sanchaek.login.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
