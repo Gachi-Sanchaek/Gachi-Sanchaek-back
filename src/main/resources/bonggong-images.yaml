@@ -1,0 +1,112 @@
+bonggong-list:
+  bonggongs:
+    - name: 기본봉공
+      filename: 1_default.png
+    - name: 안녕봉공
+      filename: 2_hello.png
+    - name: 볼부비봉공
+      filename: 3_cheekrub.png
+    - name: 걷는봉공
+      filename: 4_walking.png
+    - name: 봉무원
+      filename: 5_office.png
+    - name: 앉은봉공
+      filename: 6_sitting.png
+    - name: 신난봉공
+      filename: 7_excited.png
+    - name: 곰곰봉공
+      filename: 8_thinking.png
+    - name: 아리와봉공
+      filename: 9_ariwith.png
+    - name: 로켓다리봉공
+      filename: 10_rocket.png
+    - name: 풍물놀이봉공
+      filename: 11_festival.png
+    - name: 두루마기봉공
+      filename: 12_durumagi.png
+    - name: 우비봉공
+      filename: 13_raincoat.png
+    - name: 발레봉공
+      filename: 14_ballet.png
+    - name: 캠핑봉공
+      filename: 15_camping.png
+    - name: 마린봉공
+      filename: 16_marine.png
+    - name: 파도타기봉공
+      filename: 17_surfing.png
+    - name: 갯벌봉공
+      filename: 18_mudflat.png
+    - name: 개발자봉공
+      filename: 19_developer.png
+    - name: 농부봉공
+      filename: 20_farmer.png
+    - name: 업무봉공
+      filename: 21_working.png
+    - name: 졸음봉공
+      filename: 22_sleepy.png
+    - name: 바리스타봉공
+      filename: 23_barista.png
+    - name: 튜브봉공
+      filename: 24_tube.png
+    - name: 북극곰봉공
+      filename: 25_polarbear.png
+    - name: 소방봉공
+      filename: 26_firefighter.png
+    - name: 안전모봉공
+      filename: 27_helmet.png
+    - name: 사이렌봉공
+      filename: 28_siren.png
+    - name: 누운봉공
+      filename: 29_lying.png
+    - name: 누운담요봉공
+      filename: 30_blanketlying.png
+    - name: 꽃다발봉공
+      filename: 31_flower.png
+    - name: 헹가래봉공
+      filename: 32_celebration.png
+    - name: 헹가래봉공2
+      filename: 33_celebration2.png
+    - name: 셀피봉공
+      filename: 34_selfie.png
+    - name: 헬스봉공
+      filename: 35_gym.png
+    - name: 퇴근봉공
+      filename: 36_offwork.png
+    - name: 자는봉공
+      filename: 37_sleeping.png
+    - name: 냠냠봉공
+      filename: 38_eating.png
+    - name: 축하봉공
+      filename: 39_congrats.png
+    - name: 봄봉공
+      filename: 40_spring.png
+    - name: 여름봉공
+      filename: 41_summer.png
+    - name: 가을봉공
+      filename: 42_autumn.png
+    - name: 겨울봉공
+      filename: 43_winter.png
+    - name: 경기도탐험봉공
+      filename: 44_explore.png
+    - name: 육군봉공
+      filename: 51_army.png
+    - name: 공군봉공
+      filename: 52_airforce.png
+    - name: 해군봉공
+      filename: 53_navy.png
+    - name: 화이팅봉공
+      filename: 54_fighting.png
+    - name: 축구봉공
+      filename: 55_soccer.png
+    - name: 농구봉공
+      filename: 56_basketball.png
+    - name: 탁구봉공
+      filename: 57_pingpong.png
+    - name: 양반탈봉공
+      filename: 58_mask.png
+    - name: 민화봉공
+      filename: 59_painting.png
+    - name: 을사년봉공
+      filename: 60_eulsayear.png
+    - name: 구름위봉공
+      filename: 61_cloud.png
