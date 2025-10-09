@@ -24,7 +24,7 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/v1/auth/") || path.startsWith("/h2-console")) { //토큰 필요 X
+        if (path.startsWith("/api/v1/auth/") || path.startsWith("/h2-console") || path.startsWith("/api/v1/stamps/images")) { //토큰 필요 X
             filterChain.doFilter(request, response);
             return;
         }

@@ -31,22 +31,4 @@ public class StampService {
                 .orElseThrow(()->new IllegalArgumentException("Stamp not Found. id = "+stampId));
     }
 
-    @Transactional
-    public void buyStamp(Long userId, Long stampId){
-        Stamp stamp = findById(stampId);
-        User user = userService.findById(userId);
-
-        Long userPoint = user.getTotalPoints();
-        Long stampPrice = stamp.getPrice();
-
-        if(userPoint < stampPrice){
-            throw new RuntimeException("Not enough points to buy this stamp");
-        }
-
-        userPoint-=stampPrice;
-        user.setTotalPoints(userPoint);
-        userStampService.addStamp(user, stamp);
-
-    }
-
 }
