@@ -19,13 +19,13 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "stamps")
 @Getter
 @Setter
-@Builder
+//@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+//@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Stamp {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -40,4 +40,12 @@ public class Stamp {
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public Stamp(Long id, String name, String imageUrl, Long price, LocalDateTime time) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.createdAt = time;
+    }
 }
