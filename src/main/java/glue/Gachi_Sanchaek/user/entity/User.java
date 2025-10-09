@@ -33,7 +33,7 @@ public class User {
     private Long id;
 
     @Column(name = "profile_image_url", nullable = false)
-    private String profileImageUrl = "/default.png";
+    private String profileImageUrl = "/bonggong/1_default.png";
 
     @Column(nullable = false)
     private String nickname;

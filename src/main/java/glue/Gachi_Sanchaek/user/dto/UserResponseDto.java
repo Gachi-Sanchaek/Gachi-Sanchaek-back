@@ -12,7 +12,6 @@ public class UserResponseDto {
     private String profileImageUrl;
     private String nickname;
     private String email;
-    private Long kakaoId;
     private LocalDateTime createdAt;
     private Long totalPoints;
     private Long walkingCount;
@@ -22,7 +21,6 @@ public class UserResponseDto {
         this.profileImageUrl = user.getProfileImageUrl();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
-        this.kakaoId = user.getKakaoId();
         this.createdAt = user.getCreatedAt();
         this.totalPoints = user.getTotalPoints();
         this.walkingCount = user.getWalkingCount();

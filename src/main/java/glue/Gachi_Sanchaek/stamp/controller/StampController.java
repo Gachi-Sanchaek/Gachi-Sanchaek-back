@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.stamp.controller;
 
+import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.stamp.dto.StampResponseDto;
 import glue.Gachi_Sanchaek.stamp.entity.Stamp;
 import glue.Gachi_Sanchaek.stamp.service.StampService;
@@ -10,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +25,12 @@ public class StampController {
 
     private final StampService stampService;
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<StampResponseDto>>> findAllStamps() {
-        List<StampResponseDto> result = stampService.findAll().stream().map((StampResponseDto::new)).toList();
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<StampResponseDto>>> findAllStamps(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = Long.valueOf(userDetails.getUsername());
+        List<StampResponseDto> result = stampService.findAllById(userId);
         return ApiResponse.ok(result);
     }
 
