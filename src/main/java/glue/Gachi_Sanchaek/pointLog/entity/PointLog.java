@@ -43,5 +43,12 @@ public class PointLog {
     @Column(nullable = false)
     private String title;
 
-    private String context;
+    private String location;
+
+    public PointLog(User user, Long amount, String title, String location){
+        this.user = user;
+        this.amount = amount;
+        this.title = title;
+        this.location = location;
+    }
 }
