@@ -1,7 +1,6 @@
 package glue.Gachi_Sanchaek.user.entity;
 
 
-import glue.Gachi_Sanchaek.userStamp.entity.UserStamp;
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +33,7 @@ public class User {
     private Long id;
 
     @Column(name = "profile_image_url", nullable = false)
-    private String profileImageUrl = "/default.png";
+    private String profileImageUrl = "/bonggong/1_default.png";
 
     @Column(nullable = false)
     private String nickname;
@@ -54,9 +53,6 @@ public class User {
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserStamp> userStamps;
 
     @Column(name = "total_points", nullable = false)
     private Long totalPoints = 0L;

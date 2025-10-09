@@ -43,7 +43,7 @@ public class StampInitializer {
             if(!filenames.contains(bonggong.getFilename())){
                 System.out.println("filename not found : "+bonggong.getFilename());
             }
-            Stamp stamp = new Stamp(index, bonggong.getName(), "/static/bonggong/" + bonggong.getFilename(),
+            Stamp stamp = new Stamp(index, bonggong.getName(), "/bonggong/" + bonggong.getFilename(),
                     (index - 1) * 500L, LocalDateTime.now());
             stamps.add(stamp);
             index++;
