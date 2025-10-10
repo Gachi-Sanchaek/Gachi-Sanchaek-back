@@ -66,5 +66,13 @@ public class User {
         this.nickname = userJoinDto.getUsername();
     }
 
+    public void addTotalPoints(Long reward){
+        this.totalPoints += reward;
+    }
+
+    public void addWalkingCount(Long walkingCount){
+        this.walkingCount += walkingCount;
+    }
+
 }
 

@@ -38,7 +38,7 @@ public class UserController {
         return ApiResponse.ok(new NicknameValidateResponseDto(nickname, isAvailable));
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ApiResponse<Void>> join(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UserJoinRequestDto requestDto){
@@ -46,7 +46,7 @@ public class UserController {
         return ApiResponse.ok(null);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
@@ -54,7 +54,7 @@ public class UserController {
         return ApiResponse.ok(new UserResponseDto(user));
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<ApiResponse<UserResponseDto>> update(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UserUpdateRequestDto requestDto

@@ -43,4 +43,10 @@ public class UserService {
         user.setProfileImageUrl(requestDto.getProfileImageUrl());
         return null;
     }
+
+    public User update(User user, Long reward){
+        user.addTotalPoints(reward);
+        user.addWalkingCount(1L);
+        return userRepository.save(user);
+    }
 }
