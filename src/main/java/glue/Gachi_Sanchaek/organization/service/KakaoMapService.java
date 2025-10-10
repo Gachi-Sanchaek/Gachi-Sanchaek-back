@@ -46,20 +46,13 @@ public class KakaoMapService {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("📍최종 요청 URL: https://dapi.kakao.com/v2/local/search/keyword.json?query=" + keyword +
-                "&x=" + longitude + "&y=" + latitude + "&radius=" + radius);
-
-        System.out.println("📍Raw Kakao Response: " + rawResponse);
-
-
-        System.out.println("📍 Authorization Header = KakaoAK " + kakaoApiKey);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoPlaceResponse response = objectMapper.readValue(rawResponse, KakaoPlaceResponse.class);
 
         if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
-            System.out.println("⚠️ 카카오에서 결과를 찾을 수 없습니다. (query=" + keyword + ")");
+            System.out.println(" 카카오에서 결과를 찾을 수 없습니다. (query=" + keyword + ")");
             return List.of();
         }
 
