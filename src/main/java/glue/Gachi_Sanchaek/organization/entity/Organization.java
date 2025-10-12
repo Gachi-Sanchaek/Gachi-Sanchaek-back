@@ -1,10 +1,15 @@
 package glue.Gachi_Sanchaek.organization.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Organization {
 
     @Id
@@ -20,7 +25,7 @@ public class Organization {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column
     private String phone;
 
     @Column(nullable = false)

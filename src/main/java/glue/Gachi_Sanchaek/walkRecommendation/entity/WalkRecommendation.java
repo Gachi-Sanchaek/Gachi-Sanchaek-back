@@ -2,7 +2,8 @@ package glue.Gachi_Sanchaek.walkRecommendation.entity;
 
 import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.walkRecommendation.converter.WaypointConverter;
+import glue.Gachi_Sanchaek.walkRecommendation.convert.WaypointConverter;
+import glue.Gachi_Sanchaek.walkRecommendation.dto.Waypoint;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -23,10 +24,10 @@ public class WalkRecommendation {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    @Column(nullable = false)
+    @Column(name = "recommendation_group_id",nullable = false)
     private Long groupId;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
@@ -38,6 +39,9 @@ public class WalkRecommendation {
     @Convert(converter = WaypointConverter.class)
     @Column(nullable = false, columnDefinition = "json")
     private List<Waypoint> wayPoints;
+
+    @Column(nullable = false)
+    private double distance;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

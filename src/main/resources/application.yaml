@@ -8,7 +8,7 @@ spring:
       - classpath:config/env.yaml
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
 #        show_sql: true
@@ -18,3 +18,9 @@ kakao:
   api:
     key: ede968322c3e4dc3bf4dd53f58a54f1f
     base-url: "https://dapi.kakao.com"
+
+
+gemini:
+  api:
+    key: AIzaSyBRGNw1_HiEUWtLjPeYaEQh2_917SRxvUM
+    base-url: "https://generativelanguage.googleapis.com"

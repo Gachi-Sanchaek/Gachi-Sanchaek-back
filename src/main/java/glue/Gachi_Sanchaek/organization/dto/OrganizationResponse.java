@@ -1,22 +1,20 @@
 package glue.Gachi_Sanchaek.organization.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
+import glue.Gachi_Sanchaek.organization.entity.Organization;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class OrganizationDTO {
+public class OrganizationResponse {
+    private Long id;
     private Long kakaoId; //저장용
     private String name;
     private String address;
     private double latitude;
     private double longitude;
-    private int distance;
-
-
+    private Organization.OrganizationCategory category;
+    private LocalDateTime createdAt;
 }

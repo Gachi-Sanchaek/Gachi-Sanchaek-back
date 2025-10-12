@@ -1,15 +1,15 @@
-package glue.Gachi_Sanchaek.walkRecommendation.converter;
+package glue.Gachi_Sanchaek.walkRecommendation.convert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import glue.Gachi_Sanchaek.walkRecommendation.entity.Waypoint;
+import glue.Gachi_Sanchaek.walkRecommendation.dto.Waypoint;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 import java.util.List;
 
 @Converter
-public class WaypointConverter implements AttributeConverter<List<Waypoint>,String> {
+public class WaypointConverter implements AttributeConverter<List<Waypoint>, String> {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -18,7 +18,7 @@ public class WaypointConverter implements AttributeConverter<List<Waypoint>,Stri
         try {
             return mapper.writeValueAsString(attribute);
         } catch (Exception e) {
-            throw new IllegalStateException("JSON 변환 중 오류 발생", e);
+            throw new IllegalStateException("Waypoint 변환 오류", e);
         }
     }
 
@@ -27,7 +27,7 @@ public class WaypointConverter implements AttributeConverter<List<Waypoint>,Stri
         try {
             return mapper.readValue(dbData, new TypeReference<List<Waypoint>>() {});
         } catch (Exception e) {
-            throw new IllegalStateException("엔티티 변환 중 오류 발생", e);
+            throw new IllegalStateException("Waypoint 역변환 오류", e);
         }
     }
 }

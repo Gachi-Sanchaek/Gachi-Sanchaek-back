@@ -58,8 +58,7 @@ public class KakaoMapService {
 
         return response.getDocuments().stream()
                 .map(doc -> OrganizationDTO.builder()
-                        .id(null)  //DB저장전
-                        .kakaoId(doc.getKakaoId())
+                        .kakaoId(Long.parseLong(doc.getKakaoId()))
                         .name(doc.getName())
                         .address(doc.getAddress())
                         .latitude(Double.parseDouble(doc.getLatitude()))
