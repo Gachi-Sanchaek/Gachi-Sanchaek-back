@@ -4,7 +4,7 @@ spring:
   config:
     import:
       - classpath:config/h2.yaml
-      #      - classpath:config/mysql.yaml
+#      - classpath:config/mysql.yaml
       - classpath:config/env.yaml
   jpa:
     hibernate:
@@ -13,14 +13,3 @@ spring:
       hibernate:
 #        show_sql: true
 #        format_sql: true
-
-kakao:
-  api:
-    key: "KAKAO_API_KEY"
-    base-url: "https://dapi.kakao.com"
-
-
-gemini:
-  api:
-    key: "GEMINI_API_KEY"
-    base-url: "https://generativelanguage.googleapis.com"
