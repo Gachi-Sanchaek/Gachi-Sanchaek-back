@@ -54,6 +54,7 @@ public class WalkRecommendationService {
                 -한 코스에서 같은 경로를 지날 수 없습니다.
                 -각 코스는 서로 겹치지 않게 구성해주세요.
                 -각 코스에는 id, description, estimatedTime, waypoint(lat,lng)를 포함한 JSON 형태로 응답해주세요.
+                -waypoint에서 lat, lng 의 개수는 10개씩 주세요.
                 다음 형식의 순수 JSON만 반환하세요. 코드 블록, 백틱, 설명, 추가 텍스트 금지.
                 
                 [응답형식(JSON)]
