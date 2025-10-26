@@ -37,6 +37,10 @@ public class Ranking {
 
     @Column(name = "rank_period", nullable = false)
     private int rankPeriod;
-    
 
+    public Ranking(User user, Long reward, int period) {
+        this.user = user;
+        this.point = reward;
+        this.rankPeriod = period;
+    }
 }
