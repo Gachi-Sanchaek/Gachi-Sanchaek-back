@@ -23,12 +23,17 @@ public class WalkRecommendationService {
     private final GeminiService geminiService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public WalkRecommendationGroupResponse recommendRoutes(Long orgId, int minutes) {
+    public WalkRecommendationGroupResponse recommendRoutes(Long orgId, int minutes, double currentLat,double currentLng) {
 
-        Organization org = organizationRepository.findById(orgId)
-                .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
-
-        String prompt = buildPrompt(org, minutes);
+        String prompt;
+        //기관 ID가 있을 때
+        if(orgId != null) {
+            Organization org = organizationRepository.findById(orgId)
+                    .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
+            prompt = buildPromptWithOrg(org, minutes);
+        }else { // 기관 ID가 없을 때
+            prompt = buildPromptGeneral(currentLat, currentLng, minutes);
+        }
 
         String geminiResult = geminiService.generateRoutesFromGemini(prompt);
 
@@ -43,7 +48,7 @@ public class WalkRecommendationService {
         return group;
     }
 
-    private String buildPrompt(Organization org, int minutes) {
+    private String buildPromptWithOrg(Organization org, int minutes) {
         return String.format("""
                 당신은 산책 코스를 추천하는 AI입니다.
                 
@@ -71,6 +76,37 @@ public class WalkRecommendationService {
                         }
                 
                 """, org.getName(), org.getLatitude(), org.getLongitude(), minutes);
+
+    }
+    private String buildPromptGeneral(double currentLat, double currentLng, int minutes) {
+        return String.format("""
+                당신은 산책 코스를 추천하는 AI입니다.
+                
+                [요구사항]
+                -출발지와 도착지는 모두 "현재위치"(위도: %f, 경도: %f) 입니다.
+                -추천 경로는 **간단하게 주변 산책**을 할 수 있는 코스여야 합니다.
+                -왕복 기준 %d분 동안 걸을 수 있는 경로를 3개 추천해주세요.
+                -각 코스마다 15글자 이내의 설명을 넣어주세요.
+                -한 코스에서 같은 경로를 지날 수 없습니다.
+                -각 코스는 서로 겹치지 않게 구성해주세요.
+                -각 코스에는 id, description, estimatedTime, waypoint(lat,lng)를 포함한 JSON 형태로 응답해주세요.
+                -waypoint에서 lat, lng 의 개수는 10개씩 주세요.
+                다음 형식의 순수 JSON만 반환하세요. 코드 블록, 백틱, 설명, 추가 텍스트 금지.
+                
+                [응답형식(JSON)]
+                {
+                          "routes": [
+                            {
+                              "id": <숫자>,
+                              "description": "<설명>",
+                              "waypoints": [{"lat": <위도>, "lng": <경도>}, ...],
+                              "estimatedTime": <숫자>
+                            },
+                            ...
+                          ]
+                        }
+                
+                """, currentLat, currentLng, minutes);
 
     }
 
