@@ -47,7 +47,6 @@ public class KakaoMapService {
                 .block();
 
 
-
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoPlaceResponse response = objectMapper.readValue(rawResponse, KakaoPlaceResponse.class);
 

@@ -22,10 +22,13 @@ public class WalkRecommendationController {
     @GetMapping("/recommend")
     public ResponseEntity<ApiResponse<WalkRecommendationGroupResponse>> getRecommend(
             @AuthenticationPrincipal User user,
-            @RequestParam Long orgId,
-            @RequestParam int minutes){
+            @RequestParam(required = false) Long orgId,
+            @RequestParam int minutes,
+            @RequestParam double currentLat,
+            @RequestParam double currentLng) {
 
-        return ResponseEntity.ok(ApiResponse.onSuccess(walkRecommendationService.recommendRoutes(orgId, minutes)));
+        return ResponseEntity.ok(ApiResponse.onSuccess(walkRecommendationService.recommendRoutes(
+                orgId, minutes,currentLat,currentLng)));
     }
 
 

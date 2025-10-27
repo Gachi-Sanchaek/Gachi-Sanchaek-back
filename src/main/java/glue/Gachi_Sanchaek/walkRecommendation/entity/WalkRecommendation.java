@@ -5,6 +5,7 @@ import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.walkRecommendation.convert.WaypointConverter;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.Waypoint;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,11 +22,11 @@ public class WalkRecommendation {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id")
+    @JoinColumn(name = "organization_id", nullable = true)
     private Organization organization;
 
     @Column(name = "recommendation_group_id",nullable = false)
-    private Long groupId;
+    private String groupId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
@@ -43,6 +44,7 @@ public class WalkRecommendation {
     @Column(nullable = false)
     private double distance;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
