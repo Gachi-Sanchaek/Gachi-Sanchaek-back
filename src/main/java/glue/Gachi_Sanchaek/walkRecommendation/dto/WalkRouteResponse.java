@@ -14,7 +14,7 @@ import java.util.List;
 public class WalkRouteResponse {
     private Long id;
     private String description;
-    private List<Waypoint> waypoints;
     private int estimatedTime;
+    private List<Waypoint> waypoints;
 
 }
