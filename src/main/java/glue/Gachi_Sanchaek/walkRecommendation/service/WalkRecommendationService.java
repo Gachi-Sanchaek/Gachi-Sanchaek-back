@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.organization.repository.OrganizationRepository;
-import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRecommendationGroupResponse;
-import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRouteResponse;
-import glue.Gachi_Sanchaek.walkRecommendation.dto.Waypoint;
+import glue.Gachi_Sanchaek.user.entity.User;
+import glue.Gachi_Sanchaek.user.repository.UserRepository;
+import glue.Gachi_Sanchaek.walkRecommendation.dto.*;
+import glue.Gachi_Sanchaek.walkRecommendation.entity.WalkRecommendation;
+import glue.Gachi_Sanchaek.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,8 @@ public class WalkRecommendationService {
     private final OrganizationRepository organizationRepository;
     private final GeminiService geminiService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final UserRepository userRepository;
+    private final WalkRecommendationRepository walkRecommendationRepository;
 
     public WalkRecommendationGroupResponse recommendRoutes(Long orgId, int minutes, double currentLat,double currentLng) {
 
@@ -132,5 +137,34 @@ public class WalkRecommendationService {
         } catch (Exception e) {
             throw new RuntimeException("Gemini 응답 파싱 실패: " + e.getMessage(), e);
         }
+    }
+
+    @Transactional
+    public SaveWalkRouteResponse saveSelectedRoute(Long userId, WalkRouteSelectionRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
+
+        Organization organization = null; // 미리초기화
+        if(req.getOrgId() != null){
+            organization = organizationRepository.findById(req.getOrgId())
+                    .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
+        }
+
+        WalkRecommendation route = WalkRecommendation.builder()
+                .user(user)
+                .organization(organization)
+                .groupId(req.getGroupId())
+                .description(req.getSelectedRoute().getDescription())
+                .plannedMinutes(req.getSelectedRoute().getEstimatedTime())
+                .wayPoints(req.getSelectedRoute().getWaypoints())
+                .build();
+
+        WalkRecommendation savedRoute = walkRecommendationRepository.save(route);
+
+        return SaveWalkRouteResponse.builder()
+                .walkRecommendationId(savedRoute.getId())
+                .message("산책경로가 성공적으로 저장되었습니다")
+                .savedAt(savedRoute.getCreatedAt())
+                .build();
     }
 }

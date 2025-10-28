@@ -5,12 +5,20 @@ import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.walkRecommendation.convert.WaypointConverter;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.Waypoint;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
 public class WalkRecommendation {
 
     @Id
@@ -34,15 +42,9 @@ public class WalkRecommendation {
     @Column(nullable = false)
     private int plannedMinutes;  // 사용자가 설정한 산책 시간
 
-    @Column(nullable = false)
-    private int actualMinutes; // 실제 걸린 산책 시간(분)
-
     @Convert(converter = WaypointConverter.class)
     @Column(nullable = false, columnDefinition = "json")
     private List<Waypoint> wayPoints;
-
-    @Column(nullable = false)
-    private double distance;
 
     @CreationTimestamp
     @Column(nullable = false)
