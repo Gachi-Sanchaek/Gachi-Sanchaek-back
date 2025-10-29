@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserJoinRequestDto {
-    private String gender;
     private String nickname;
+    private String gender;
 
 }
