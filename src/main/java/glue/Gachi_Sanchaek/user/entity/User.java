@@ -62,6 +62,7 @@ public class User {
     private Long walkingCount = 0L;
 
     public User(UserJoinDto userJoinDto) {
+        this();
         this.kakaoId = userJoinDto.getKakaoId();
         this.email = userJoinDto.getEmail();
         this.nickname = userJoinDto.getUsername();
