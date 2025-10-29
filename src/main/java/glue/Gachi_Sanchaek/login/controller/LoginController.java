@@ -2,7 +2,7 @@ package glue.Gachi_Sanchaek.login.controller;
 
 
 import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
-import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
+import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.login.service.KakaoLoginService;
