@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,12 +20,21 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
 
+    private final List<String> EXCLUDED_PATHS = List.of(
+            "/api/v1/auth/",
+            "/h2-console",
+            "/api/v1/stamps/images",
+            "/bonggong",
+            "/swagger-ui",
+            "/v3/api-docs"
+    );
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/v1/auth/") || path.startsWith("/h2-console") || path.startsWith("/api/v1/stamps/images") || path.startsWith("/bonggong")) { //토큰 필요 X
+        if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) { // 토큰 필요 X
             filterChain.doFilter(request, response);
             return;
         }
