@@ -25,9 +25,8 @@ public class LoginService {
         return userRepository.findByKakaoId(kakaoId).orElse(null);
     }
 
-    public User joinProcess(UserJoinDto joinDTO, String role) {
+    public User joinProcess(UserJoinDto joinDTO) {
         User user = new User(joinDTO);
-        user.setRole(role);
         return userRepository.save(user);
     }
 

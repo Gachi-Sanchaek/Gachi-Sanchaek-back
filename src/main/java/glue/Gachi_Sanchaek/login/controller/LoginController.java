@@ -34,7 +34,7 @@ public class LoginController {
         boolean isNewUser = false;
         if(user == null){ //신규 회원
             isNewUser = true;
-            user = loginService.joinProcess(new UserJoinDto(userInfo),"USER");
+            user = loginService.joinProcess(new UserJoinDto(userInfo));
         }
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(isNewUser, user.getNickname());
