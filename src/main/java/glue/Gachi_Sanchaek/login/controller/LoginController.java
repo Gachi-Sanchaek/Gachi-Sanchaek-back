@@ -1,21 +1,14 @@
 package glue.Gachi_Sanchaek.login.controller;
 
 
-import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
 import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
-import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
+import glue.Gachi_Sanchaek.login.service.LoginService.AuthResult;
 import glue.Gachi_Sanchaek.login.service.TokenService;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.login.service.KakaoLoginService;
 import glue.Gachi_Sanchaek.login.service.LoginService;
-import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.util.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
-import javax.security.sasl.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,50 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class LoginController {
-
-    private final KakaoLoginService kakaoLoginService;
     private final LoginService loginService;
-    private final TokenService tokenService;
-    private final UserService userService;
 
     @GetMapping("/kakao/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> callback(@RequestParam("code") String code) {
-        String kakaoAccessToken = kakaoLoginService.getAccessTokenFromKakao(code);
-        KakaoUserInfoResponseDto userInfo = kakaoLoginService.getUserInfo(kakaoAccessToken); //카카오 유저 정보
 
-        LoginResponseDto loginResponseDto = loginService.kakaoLogin(userInfo);
-        User user = loginResponseDto.getUser();
+        AuthResult authResult = loginService.loginWithKakaoCode(code);
 
-        String accessToken = tokenService.createToken(user.getId(), user.getRole());
-        String refreshToken = tokenService.createRefreshToken(user.getId());
-        System.out.println("accessToken = " + accessToken);
-        return ApiResponse.okWithAuthHeader(loginResponseDto, accessToken, refreshToken);
+        return ApiResponse.okWithAuthHeader(
+                authResult.getLoginResponseDto(),
+                authResult.getAccessToken(),
+                authResult.getRefreshToken());
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<Void>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        String refreshToken = null;
-        if (request.getCookies() != null) {
-            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
+    public ResponseEntity<ApiResponse<Void>> refreshAccessToken(@CookieValue("refreshToken") String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new AuthenticationException("refreshToken is empty");
+            throw new IllegalArgumentException("Refresh token is missing.");
         }
 
-        String userId = tokenService.validateRefreshToken(refreshToken)
-                .orElseThrow(() -> new AuthenticationException("Refresh token is invalid or expired."));
-
-        User user = userService.findById(Long.valueOf(userId));
-
-        String newAccessToken = tokenService.createToken(Long.valueOf(userId), user.getRole());
-
+        String newAccessToken = loginService.reissueAccessToken(refreshToken);
         return ApiResponse.okWithAuthHeader(null, newAccessToken);
     }
 }
