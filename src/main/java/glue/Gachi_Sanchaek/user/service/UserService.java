@@ -1,7 +1,7 @@
 package glue.Gachi_Sanchaek.user.service;
 
+import glue.Gachi_Sanchaek.exception.UserNotFoundException;
 import glue.Gachi_Sanchaek.user.dto.UserJoinRequestDto;
-import glue.Gachi_Sanchaek.user.dto.UserResponseDto;
 import glue.Gachi_Sanchaek.user.dto.UserUpdateRequestDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
@@ -11,42 +11,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
 
-    public User findById(Long id){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not Found. id = " + id));
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not Found. userId = " + userId));
+    }
+
+    @Transactional
+    public void delete(Long userId){
+        User user = findById(userId);
+        userRepository.delete(user);
+    }
+
+    public boolean isAvailableNickname(String nickname){
+        return !userRepository.existsByNickname(nickname);
+    }
+
+    @Transactional
+    public User join(Long userId, UserJoinRequestDto userJoinRequestDto){
+        User user = findById(userId);
+        user.applyJoinInfo(userJoinRequestDto.getNickname(), userJoinRequestDto.getGender());
         return user;
     }
 
     @Transactional
-    public void delete(Long id){
-        userRepository.deleteById(id);
-    }
-
-    public boolean isAvailableNickname(String nickname){
-        return userRepository.existsByNickname(nickname);
-    }
-
-    public User join(Long userId, UserJoinRequestDto userJoinRequestDto){
+    public User update(Long userId, UserUpdateRequestDto requestDto) {
         User user = findById(userId);
-        user.setNickname(userJoinRequestDto.getNickname());
-        user.setGender(userJoinRequestDto.getGender());
-        return userRepository.save(user);
+        user.updateProfile(requestDto.getNickname(), requestDto.getProfileImageUrl());
+        return user;
     }
 
-
-    public User update(Long id, UserUpdateRequestDto requestDto) {
-        User user = findById(id);
-        user.setNickname(requestDto.getNickname());
-        user.setProfileImageUrl(requestDto.getProfileImageUrl());
-        return null;
-    }
-
-    public User update(User user, Long reward){
+    @Transactional
+    public User recordWalkingResult(Long userId, Long reward){
+        User user = findById(userId);
         user.addTotalPoints(reward);
-        user.addWalkingCount(1L);
-        return userRepository.save(user);
+        user.incrementWalkingCount();
+        return user;
     }
 }

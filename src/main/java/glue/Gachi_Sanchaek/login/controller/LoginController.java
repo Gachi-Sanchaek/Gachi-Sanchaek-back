@@ -2,7 +2,7 @@ package glue.Gachi_Sanchaek.login.controller;
 
 
 import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
-import glue.Gachi_Sanchaek.user.dto.LoginResponseDto;
+import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.login.service.KakaoLoginService;
@@ -34,7 +34,7 @@ public class LoginController {
         boolean isNewUser = false;
         if(user == null){ //신규 회원
             isNewUser = true;
-            user = loginService.joinProcess(new UserJoinDto(userInfo),"USER");
+            user = loginService.joinProcess(new UserJoinDto(userInfo));
         }
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(isNewUser, user.getNickname());
