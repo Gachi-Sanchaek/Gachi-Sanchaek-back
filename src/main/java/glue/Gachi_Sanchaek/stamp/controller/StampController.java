@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "스탬프 API", description = "스탬프 조회 관련 API")
+@Tag(name = "Stamp API", description = "스탬프 조회 관련 API")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/stamps")
