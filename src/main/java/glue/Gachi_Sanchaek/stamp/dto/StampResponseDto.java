@@ -12,7 +12,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
-@Setter
 public class StampResponseDto {
 
     private Long id;
@@ -31,6 +30,10 @@ public class StampResponseDto {
     @JsonProperty("isActive")
     public boolean isActive(){
         return isActive;
+    }
+
+    public void checkActivable(Long userPoints){
+        this.isActive = userPoints >= this.price;
     }
 
 }
