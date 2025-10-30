@@ -46,7 +46,7 @@ public class UserController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UserJoinRequestDto requestDto
     ){
-        User user = userService.join(userDetails.getUserId(), requestDto);
+        User user = userService.completeRegistration(userDetails.getUserId(), requestDto);
         return ApiResponse.created(new UserResponseDto(user));
     }
 
