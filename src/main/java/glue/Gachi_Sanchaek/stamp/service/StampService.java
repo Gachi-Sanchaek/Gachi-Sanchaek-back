@@ -1,18 +1,16 @@
 package glue.Gachi_Sanchaek.stamp.service;
 
+import glue.Gachi_Sanchaek.exception.StampNotFoundException;
 import glue.Gachi_Sanchaek.stamp.dto.StampResponseDto;
 import glue.Gachi_Sanchaek.stamp.entity.Stamp;
 import glue.Gachi_Sanchaek.stamp.repository.StampRepository;
 import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.repository.UserRepository;
 import glue.Gachi_Sanchaek.user.service.UserService;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -29,29 +27,27 @@ public class StampService {
     private final JdbcTemplate jdbcTemplate;
 
 
-    public List<StampResponseDto> findAllById(Long id){
-        User user = userService.findById(id);
-        List<Stamp> stamps = (List<Stamp>) stampRepository.findAll();
+    public List<StampResponseDto> getAllStampsWithUserStatus(Long userId){
+        User user = userService.findById(userId);
+        List<Stamp> stamps = stampRepository.findAll();
 
         return stamps.stream()
                 .map(stamp -> {
                     StampResponseDto dto = new StampResponseDto(stamp);
-                    dto.setActive(user.getTotalPoints() > stamp.getPrice());
+                    dto.checkActivable(user.getTotalPoints());
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-    public Stamp findById(Long stampId){
+    public Stamp findById(Long stampId) {
         return stampRepository.findById(stampId)
-                .orElseThrow(()->new IllegalArgumentException("Stamp not Found. id = "+stampId));
+                .orElseThrow(() -> new StampNotFoundException("Stamp not Found. id = " + stampId));
     }
 
-
-
-    public void saveStamps(List<Stamp> stamps){
+    @Transactional
+    public void saveAllStamps(List<Stamp> stamps){
         String sql = "INSERT INTO stamps (id, name, image_url, price, created_at) VALUES (?,?,?,?,?)";
-        LocalDateTime now = LocalDateTime.now();
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -60,7 +56,7 @@ public class StampService {
                 ps.setString(2, stamp.getName());
                 ps.setString(3, stamp.getImageUrl());
                 ps.setLong(4, stamp.getPrice());
-                ps.setTimestamp(5, Timestamp.valueOf(now));
+                ps.setTimestamp(5, Timestamp.valueOf(stamp.getCreatedAt()));
             }
 
             @Override

@@ -43,14 +43,19 @@ public class StampInitializer {
             if(!filenames.contains(bonggong.getFilename())){
                 System.out.println("filename not found : "+bonggong.getFilename());
             }
-            Stamp stamp = new Stamp(index, bonggong.getName(), "/bonggong/" + bonggong.getFilename(),
-                    (index - 1) * 500L, LocalDateTime.now());
+            Stamp stamp = Stamp.builder()
+                    .id(index)
+                    .name(bonggong.getFilename())
+                    .imageUrl("/bonggong/"+bonggong.getFilename())
+                    .price((index-1)*500L)
+                    .createdAt(LocalDateTime.now())
+                    .build();
             stamps.add(stamp);
             index++;
         }
         
         // 저장함수 호출
-        stampService.saveStamps(stamps);
+        stampService.saveAllStamps(stamps);
     }
 
 
