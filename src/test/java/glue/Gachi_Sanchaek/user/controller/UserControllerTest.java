@@ -104,7 +104,7 @@ class UserControllerTest {
                 .gender("MALE")
                 .build();
 
-        when(userService.join(eq(1L), any(UserJoinRequestDto.class))).thenReturn(joinedUser);
+        when(userService.completeRegistration(eq(1L), any(UserJoinRequestDto.class))).thenReturn(joinedUser);
 
         // when & then
         mockMvc.perform(post("/api/v1/users")

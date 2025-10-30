@@ -20,10 +20,10 @@ public class TokenService {
     private final RedisTemplate<String,String> redisTemplate;
     private final UserService userService;
 
-    @Value("${jwt.access-expiration-ms:86400000}")
+    @Value("${jwt.access-expiration-sec:86400}")
     private Long accessExpirationMs;
 
-    @Value("${jwt.refresh-expiration-ms:2592000000}")
+    @Value("${jwt.refresh-expiration-sec:2592000}")
     private Long refreshExpirationMs;
 
     private final String REFRESH_TOKEN_PREFIX = "refresh:";

@@ -18,7 +18,7 @@ public class ApiResponse<T> {
     private final String message;
     private final T data;
 
-    private static final Long REFRESH_TOKEN_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000L;
+    private static final Long REFRESH_TOKEN_EXPIRATION_SEC = 30 * 24 * 60 * 60L;
 
     public static <T> ResponseEntity<ApiResponse<T>> ok(T data) {
         return ResponseEntity.ok(
@@ -47,7 +47,7 @@ public class ApiResponse<T> {
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(REFRESH_TOKEN_EXPIRATION_MS)
+                .maxAge(REFRESH_TOKEN_EXPIRATION_SEC)
                 .sameSite("Strict")
                 .build();
 

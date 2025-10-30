@@ -6,6 +6,7 @@ import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.login.service.LoginService;
 import glue.Gachi_Sanchaek.login.service.LoginService.AuthResult;
 import glue.Gachi_Sanchaek.util.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     private final LoginService loginService;
 
-    @SecureOperation(
+    @Operation(
             summary = "카카오 로그인/회원가입",
             description = "카카오 인가 코드를 받아 로그인 또는 회원가입을 처리하고 JWT 토큰을 발급합니다. "
                     + "해당 엔드포인트는 카카오측에서 호출합니다.")
