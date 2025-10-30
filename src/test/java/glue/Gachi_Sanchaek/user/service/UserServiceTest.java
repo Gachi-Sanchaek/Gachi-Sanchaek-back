@@ -162,7 +162,7 @@ class UserServiceTest {
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
 
             // when
-            User joinedUser = userService.join(userId, requestDto);
+            User joinedUser = userService.completeRegistration(userId, requestDto);
 
             // then
             assertThat(joinedUser.getNickname()).isEqualTo("가입닉네임");

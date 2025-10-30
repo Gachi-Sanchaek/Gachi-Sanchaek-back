@@ -1,56 +1,67 @@
 package glue.Gachi_Sanchaek.login.service;
 
-
-import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
+import glue.Gachi_Sanchaek.login.dto.KakaoUserInfoResponseDto;
+import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.repository.UserRepository;
-import java.util.UUID;
+import glue.Gachi_Sanchaek.user.service.UserService;
+import java.util.Optional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-    private final UserRepository userRepository;
-    private final JWTUtil jwtUtil;
-//    private final RedisTemplate<String,String> redisTemplate;
+    private final UserService userService;
+    private final KakaoLoginService kakaoLoginService;
+    private final TokenService tokenService;
 
-    private final Long ACCESS_TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000L;
-    private final Long REFRESH_TOKEN_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000L;
+    @Transactional
+    public AuthResult loginWithKakaoCode(String code) {
 
-    private final String REFRESH_TOKEN_PREFIX = "refresh:";
+        String kakaoAccessToken = kakaoLoginService.getAccessTokenFromKakao(code);
+        KakaoUserInfoResponseDto userInfo = kakaoLoginService.getUserInfo(kakaoAccessToken);
 
-    public User findByKakaoId(Long kakaoId){
-        return userRepository.findByKakaoId(kakaoId).orElse(null);
+        LoginResult loginResult = kakaoLogin(userInfo);
+        User user = loginResult.getUser();
+
+        String accessToken = tokenService.createAccessToken(user.getId(), user.getRole());
+        String refreshToken = tokenService.createRefreshToken(user.getId());
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(loginResult.isNewUser(), user);
+
+        return new AuthResult(loginResponseDto, accessToken, refreshToken);
     }
 
-    public User joinProcess(UserJoinDto joinDTO) {
-        User user = new User(joinDTO);
-        return userRepository.save(user);
+    private LoginResult kakaoLogin(KakaoUserInfoResponseDto userInfo) {
+        Optional<User> userOpt = userService.findByKakaoId(userInfo.getId());
+
+        if (userOpt.isEmpty()) {
+            User newUser = userService.registerInitialUser(new UserJoinDto(userInfo));
+            return new LoginResult(newUser, true);
+        }
+
+        return new LoginResult(userOpt.get(), false);
     }
 
-    public String createToken(Long userId, String role) {
-        return createToken(userId, role,  ACCESS_TOKEN_EXPIRATION_MS);
+    public String reissueAccessToken(String refreshToken) {
+        return tokenService.reissueAccessToken(refreshToken);
     }
 
-    public String createToken(Long userId, String role, Long second) {
-        return jwtUtil.createJwt(userId, role, second);
+    @Getter
+    @RequiredArgsConstructor
+    public static class AuthResult {
+        private final LoginResponseDto loginResponseDto;
+        private final String accessToken;
+        private final String refreshToken;
     }
 
-    public String createRefreshToken(Long userId) {
-        return createRefreshToken(userId, REFRESH_TOKEN_EXPIRATION_MS);
+    @Getter
+    @RequiredArgsConstructor
+    private static class LoginResult {
+        private final User user;
+        private final boolean isNewUser;
     }
-
-    public String createRefreshToken(Long userId, Long second) {
-        String refreshToken = UUID.randomUUID().toString();
-//        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + refreshToken, String.valueOf(userId), Duration.ofSeconds(second));
-        return refreshToken;
-    }
-
-//    public Optional<String> validateRefreshToken(String refreshToken) {
-//        String userId = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + refreshToken);
-//        return Optional.ofNullable(userId);
-//    }
-
 }

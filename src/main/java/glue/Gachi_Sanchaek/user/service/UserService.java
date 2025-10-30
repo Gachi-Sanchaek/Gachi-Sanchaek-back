@@ -1,10 +1,12 @@
 package glue.Gachi_Sanchaek.user.service;
 
 import glue.Gachi_Sanchaek.exception.UserNotFoundException;
+import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.dto.UserJoinRequestDto;
 import glue.Gachi_Sanchaek.user.dto.UserUpdateRequestDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,10 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not Found. userId = " + userId));
     }
 
+    public Optional<User> findByKakaoId(Long kakaoId){
+        return userRepository.findByKakaoId(kakaoId);
+    }
+
     @Transactional
     public void delete(Long userId){
         User user = findById(userId);
@@ -30,8 +36,15 @@ public class UserService {
         return !userRepository.existsByNickname(nickname);
     }
 
+
     @Transactional
-    public User join(Long userId, UserJoinRequestDto userJoinRequestDto){
+    public User registerInitialUser(UserJoinDto joinDto) {
+        User user = new User(joinDto);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User completeRegistration(Long userId, UserJoinRequestDto userJoinRequestDto){
         User user = findById(userId);
         user.applyJoinInfo(userJoinRequestDto.getNickname(), userJoinRequestDto.getGender());
         return user;
