@@ -5,6 +5,7 @@ import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.service.UserService;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,11 @@ public class LoginService {
         if (userOpt.isEmpty()) {
             User newUser = userService.registerInitialUser(new UserJoinDto(userInfo));
             return new LoginResult(newUser, true);
+        }
+
+        User user = userOpt.get();
+        if(Objects.equals(user.getGender(), "NONE")){
+            return new LoginResult(user, true);
         }
 
         return new LoginResult(userOpt.get(), false);

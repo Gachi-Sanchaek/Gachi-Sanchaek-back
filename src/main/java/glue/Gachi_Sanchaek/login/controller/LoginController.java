@@ -26,9 +26,8 @@ public class LoginController {
     private final LoginService loginService;
 
     @Operation(
-            summary = "카카오 로그인/회원가입",
-            description = "카카오 인가 코드를 받아 로그인 또는 회원가입을 처리하고 JWT 토큰을 발급합니다. "
-                    + "해당 엔드포인트는 카카오측에서 호출합니다.")
+            summary = "카카오 로그인/회원가입 코드 검증",
+            description = "카카오 인가 코드를 받아 로그인 또는 회원가입을 처리하고 JWT 토큰을 발급합니다. ")
     @GetMapping("/kakao/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> callback(
             @Parameter(description = "카카오 서버로부터 받은 인가 코드", required = true)
