@@ -17,11 +17,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "point_logs")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -37,6 +37,7 @@ public class PointLog {
     @Column(nullable = false)
     private Long amount;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
