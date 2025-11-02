@@ -22,8 +22,7 @@ public class PointLogController {
     public ResponseEntity<ApiResponse<List<PointLogResponseDto>>> getAllPointLogs(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
-        List<PointLogResponseDto> pointLogs = pointLogService.findByUserId(userId);
+        List<PointLogResponseDto> pointLogs = pointLogService.findByUserId(userDetails.getUserId());
         return ApiResponse.ok(pointLogs);
     }
 }
