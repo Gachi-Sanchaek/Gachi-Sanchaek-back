@@ -11,7 +11,6 @@ public class UserResponseDto {
 
     private String profileImageUrl;
     private String nickname;
-    private String email;
     private LocalDateTime createdAt;
     private Long totalPoints;
     private Long walkingCount;
@@ -20,7 +19,6 @@ public class UserResponseDto {
     public UserResponseDto(User user) {
         this.profileImageUrl = user.getProfileImageUrl();
         this.nickname = user.getNickname();
-        this.email = user.getEmail();
         this.createdAt = user.getCreatedAt();
         this.totalPoints = user.getTotalPoints();
         this.walkingCount = user.getWalkingCount();
