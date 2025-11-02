@@ -115,7 +115,7 @@ public class WalkLocationService {
     }
 
     public double getTotalDistance(Long walkId) {
-        return totalDistanceMap.get(walkId);
+        return totalDistanceMap.getOrDefault(walkId,0.0);
     }
     public Long getTotalMinutes(Long walkId) {
         return calculateTotalMin(walkId);

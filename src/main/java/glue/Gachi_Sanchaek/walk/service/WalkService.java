@@ -40,6 +40,7 @@ public class WalkService {
 
         VerificationMethod verificationMethod = switch(request.getWalkType().toUpperCase()){
             case "PLOGGING" -> VerificationMethod.AI;
+            case "NORMAL" -> VerificationMethod.NONE;
             default -> VerificationMethod.QR;
         };
         WalkRecord walkRecord = WalkRecord.builder()
