@@ -35,9 +35,6 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
-    private String email;
-
     @Column(name = "kakao_id", nullable = false)
     private Long kakaoId;
 
@@ -64,7 +61,6 @@ public class User {
     public User(UserJoinDto userJoinDto) {
         this();
         this.kakaoId = userJoinDto.getKakaoId();
-        this.email = userJoinDto.getEmail();
         this.nickname = userJoinDto.getUsername();
     }
 
