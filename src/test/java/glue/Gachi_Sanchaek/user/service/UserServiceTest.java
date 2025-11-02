@@ -40,7 +40,6 @@ class UserServiceTest {
         testUser = User.builder()
                 .id(1L)
                 .nickname("기존닉네임")
-                .email("test@example.com")
                 .kakaoId(12345L)
                 .role("USER")
                 .gender("NONE")

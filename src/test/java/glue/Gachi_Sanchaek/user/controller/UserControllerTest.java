@@ -71,7 +71,6 @@ class UserControllerTest {
         testUser = User.builder()
                 .id(1L)
                 .nickname("기존닉네임")
-                .email("test@example.com")
                 .kakaoId(12345L)
                 .gender("MALE")
                 .createdAt(LocalDateTime.now())
@@ -89,8 +88,7 @@ class UserControllerTest {
                         .with(user(mockUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.nickname").value("기존닉네임"))
-                .andExpect(jsonPath("$.data.email").value("test@example.com"));
+                .andExpect(jsonPath("$.data.nickname").value("기존닉네임"));
     }
 
     @Test
