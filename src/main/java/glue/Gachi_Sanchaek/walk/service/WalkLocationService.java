@@ -114,6 +114,12 @@ public class WalkLocationService {
         return EARTH_RADIUS_KM * c;
     }
 
+    public double getTotalDistance(Long walkId) {
+        return totalDistanceMap.get(walkId);
+    }
+    public Long getTotalMinutes(Long walkId) {
+        return calculateTotalMin(walkId);
+    }
     //웹소켓 연결 종료 시 호출
     public void finishWalk(Long walkId) {
         startTimeMap.remove(walkId);
