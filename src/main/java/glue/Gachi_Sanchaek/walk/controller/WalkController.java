@@ -58,4 +58,14 @@ public class WalkController {
         }
     }
 
+    @PostMapping("/qr")
+    public ResponseEntity<ApiResponse<WalkResponse>> veriftQr(
+            @RequestParam("qrToken") String qrToken,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        Long userId = Long.parseLong(userDetails.getUsername());
+        WalkResponse response = walkService.handleQrScan(userId,qrToken);
+        return ApiResponse.ok(response,"QR 인증 처리 완료");
+    }
+
 }

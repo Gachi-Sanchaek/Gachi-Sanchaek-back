@@ -5,8 +5,6 @@ import glue.Gachi_Sanchaek.ranking.service.RankingService;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
 import glue.Gachi_Sanchaek.user.service.UserService;
-import glue.Gachi_Sanchaek.util.ApiResponse;
-import glue.Gachi_Sanchaek.walk.dto.WalkEndRequest;
 import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
@@ -16,7 +14,6 @@ import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import glue.Gachi_Sanchaek.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -105,6 +102,44 @@ public class WalkService {
                 .pointsEarned(reward)
                 .message("산책 종료 완료")
                 .build();
+    }
+
+    //QR인식
+    public WalkResponse handleQrScan(Long userId, String qrToken){
+        WalkRecord walk = walkRecordRepository
+                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
+                .orElseThrow(() -> new IllegalArgumentException("QR 인증 대상 산책 세션이 존재하지 않습니다"));
+
+        //처음 스캔할 때
+        if(walk.getQrToken()==null){
+            walk.setQrToken(qrToken);
+            walk.setStatus(WalkStatus.ONGOING);
+            walkRecordRepository.save(walk);
+
+            return WalkResponse.builder()
+                    .walkId(walk.getId())
+                    .status(walk.getStatus())
+                    .walkType(walk.getWalkType())
+                    .verificationMethod(walk.getVerificationMethod())
+                    .startTime(walk.getStartTime())
+                    .build();
+        }
+
+        //두번째 스캔 - QR 일치하면 FINISHED 처리
+        if(walk.getQrToken().equals(qrToken)){
+            walk.setStatus(WalkStatus.FINISHED);
+            walk.setEndTime(LocalDateTime.now());
+            walkRecordRepository.save(walk);
+
+            return WalkResponse.builder()
+                    .walkId(walk.getId())
+                    .status(walk.getStatus())
+                    .walkType(walk.getWalkType())
+                    .verificationMethod(walk.getVerificationMethod())
+                    .startTime(walk.getStartTime())
+                    .build();
+        }
+        throw new IllegalArgumentException("산책 전후 QR 코드가 일치하지 않습니다");
     }
     private int calculateReward(String walkType, double distanceKm){
         //거리 기반 기본 포인트 : 1km당 100점 (반올림)
