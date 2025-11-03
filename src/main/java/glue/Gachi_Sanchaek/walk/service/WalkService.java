@@ -94,7 +94,7 @@ public class WalkService {
 
         //후처리 호출 : 포인트 및 순위 갱신
         userService.recordWalkingResult(userId,reward);
-        pointLogService.save(walk.getUser(),reward,type,locationName);
+        //pointLogService.save(walk.getUser(),reward,type,locationName);
         rankingService.updateRanking(userId,reward);
 
         //DTO로 반환
