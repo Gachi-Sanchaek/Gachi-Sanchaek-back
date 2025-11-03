@@ -27,6 +27,9 @@ public class KakaoPlaceResponse {
         @JsonProperty("place_name")
         private String name;
 
+        @JsonProperty("phone")
+        private String phone;
+
         @JsonProperty("address_name")
         private String address;
 

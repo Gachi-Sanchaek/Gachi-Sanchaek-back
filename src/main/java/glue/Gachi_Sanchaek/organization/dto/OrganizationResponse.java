@@ -12,6 +12,7 @@ public class OrganizationResponse {
     private Long id;
     private Long kakaoId; //저장용
     private String name;
+    private String phone;
     private String address;
     private double latitude;
     private double longitude;

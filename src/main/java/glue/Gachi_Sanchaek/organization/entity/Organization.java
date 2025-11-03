@@ -25,7 +25,7 @@ public class Organization {
     @Column(nullable = false)
     private String address;
 
-    @Column
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
