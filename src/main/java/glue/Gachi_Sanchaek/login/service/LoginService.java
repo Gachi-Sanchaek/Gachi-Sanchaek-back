@@ -30,7 +30,7 @@ public class LoginService {
 
         String accessToken = tokenService.createAccessToken(user.getId(), user.getRole());
         String refreshToken = tokenService.createRefreshToken(user.getId());
-
+        System.out.println("accessToken = " + accessToken);
         LoginResponseDto loginResponseDto = new LoginResponseDto(loginResult.isNewUser(), user);
 
         return new AuthResult(loginResponseDto, accessToken, refreshToken);

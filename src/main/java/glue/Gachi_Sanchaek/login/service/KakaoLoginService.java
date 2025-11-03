@@ -66,7 +66,6 @@ public class KakaoLoginService {
                 .block();
 
         log.info("[Kakao] Code Validation Complete");
-        System.out.println("Access Token :" + kakaoTokenResponseDto.getAccessToken());
 
         return kakaoTokenResponseDto.getAccessToken();
     }
