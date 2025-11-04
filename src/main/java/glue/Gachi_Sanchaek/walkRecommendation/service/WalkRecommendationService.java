@@ -150,6 +150,11 @@ public class WalkRecommendationService {
             organization = organizationRepository.findById(req.getOrgId())
                     .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
         }
+        var routeDto = req.getSelectedRoute();
+        if (routeDto == null || routeDto.getWaypoints() == null || routeDto.getWaypoints().isEmpty()) {
+            throw new IllegalArgumentException("선택 경로가 비어있습니다(waypoints 없음).");
+        }
+
 
         WalkRecommendation route = WalkRecommendation.builder()
                 .user(user)

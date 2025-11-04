@@ -23,7 +23,7 @@ public class WalkRecommendationController {
 
     @GetMapping("/recommend")
     public ResponseEntity<ApiResponse<WalkRecommendationGroupResponse>> getRecommend(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(required = false) Long orgId,
             @RequestParam int minutes,
             @RequestParam double currentLat,
