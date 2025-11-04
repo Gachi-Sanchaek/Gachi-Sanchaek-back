@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
@@ -37,7 +38,7 @@ public class PointLog {
     @Column(nullable = false)
     private Long amount;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
