@@ -3,7 +3,11 @@ package glue.Gachi_Sanchaek.organization.service;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
 import glue.Gachi_Sanchaek.organization.entity.Organization;
+import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
 import glue.Gachi_Sanchaek.organization.repository.OrganizationRepository;
+import glue.Gachi_Sanchaek.organization.repository.UserOrganizationRepository;
+import glue.Gachi_Sanchaek.user.entity.User;
+import glue.Gachi_Sanchaek.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,52 +19,58 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
 
     @Transactional
-    public OrganizationResponse saveSelectedOrganization(String keyword, OrganizationDTO selectedOrg) {
+    public OrganizationResponse saveSelectedOrganization(
+            Long userId, String keyword, OrganizationDTO selectedOrg) {
 
         Organization.OrganizationCategory category = mapKeywordToCategory(keyword);
 
-        Optional<Organization> exist = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId());
+        Organization org;
+        boolean exists = organizationRepository.existsByKakaoPlaceId(selectedOrg.getKakaoId());
 
-        if (exist.isPresent()) {
-            Organization org = exist.get();
-            return OrganizationResponse.builder()
-                    .id(org.getId())
-                    .kakaoId(org.getKakaoPlaceId())
-                    .name(org.getName())
-                    .address(org.getAddress())
-                    .latitude(org.getLatitude())
-                    .longitude(org.getLongitude())
-                    .category(org.getCategory())
-                    .createdAt(org.getCreatedAt())
+        if (exists) {  // 이미 기관엔티티에 저장되어있어서 재사용
+            org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
+                    .orElseThrow(() -> new IllegalStateException("exists=true 인데 Organization이 없음"));
+        }else{
+            org = Organization.builder()
+                    .kakaoPlaceId(selectedOrg.getKakaoId())
+                    .name(selectedOrg.getName())
+                    .phone(selectedOrg.getPhone())
+                    .address(selectedOrg.getAddress())
+                    .latitude(selectedOrg.getLatitude())
+                    .longitude(selectedOrg.getLongitude())
+                    .category(category)
+                    .createdAt(LocalDateTime.now())
                     .build();
+            org = organizationRepository.save(org);
         }
 
-        Organization newOrg = Organization.builder()
-                .kakaoPlaceId(selectedOrg.getKakaoId())
-                .name(selectedOrg.getName())
-                .address(selectedOrg.getAddress())
-                .latitude(selectedOrg.getLatitude())
-                .longitude(selectedOrg.getLongitude())
-                .category(category)
-                .createdAt(LocalDateTime.now())
+        //유저-기관 에 저장이 안되어있음!
+        if(!userOrganizationRepository.existsByUserIdAndOrganizationId(userId, org.getId())) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다"));
+
+            userOrganizationRepository.save(
+                    UserOrganization.builder()
+                            .user(user)
+                            .organization(org)
+                            .build()
+            );
+        }
+        return OrganizationResponse.builder()
+                .id(org.getId())
+                .kakaoId(org.getKakaoPlaceId())
+                .name(org.getName())
+                .phone(org.getPhone())
+                .address(org.getAddress())
+                .latitude(org.getLatitude())
+                .longitude(org.getLongitude())
+                .category(org.getCategory())
+                .createdAt(org.getCreatedAt())
                 .build();
-
-        Organization saved = organizationRepository.save(newOrg);
-
-        OrganizationResponse res = OrganizationResponse.builder()
-                .id(saved.getId())
-                .kakaoId(saved.getKakaoPlaceId())
-                .name(saved.getName())
-                .address(saved.getAddress())
-                .latitude(saved.getLatitude())
-                .longitude(saved.getLongitude())
-                .category(saved.getCategory())
-                .createdAt(saved.getCreatedAt())
-                .build();
-
-        return res;
 
     }
 

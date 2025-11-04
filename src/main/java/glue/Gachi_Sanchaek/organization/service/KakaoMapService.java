@@ -60,6 +60,7 @@ public class KakaoMapService {
                 .map(doc -> OrganizationDTO.builder()
                         .kakaoId(Long.parseLong(doc.getKakaoId()))
                         .name(doc.getName())
+                        .phone(doc.getPhone() == null || doc.getPhone().isEmpty() ? null : doc.getPhone())
                         .address(doc.getAddress())
                         .latitude(Double.parseDouble(doc.getLatitude()))
                         .longitude(Double.parseDouble(doc.getLongitude()))

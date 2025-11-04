@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
     Optional<Organization> findByKakaoPlaceId(Long kakaoPlaceId);
+    boolean existsByKakaoPlaceId(Long kakaoPlaceId);
 }

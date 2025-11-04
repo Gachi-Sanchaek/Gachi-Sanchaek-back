@@ -92,6 +92,7 @@ public class WalkRecommendationService {
                 -추천 경로는 **간단하게 주변 산책**을 할 수 있는 코스여야 합니다.
                 -왕복 기준 %d분 동안 걸을 수 있는 경로를 3개 추천해주세요.
                 -각 코스마다 15글자 이내의 설명을 넣어주세요.
+                -코스의 설명을 추천코스의 특징을 잘 살리면서, 산책을 하고 싶다는 욕구를 불어일으키는 문구로 넣어주세요.
                 -한 코스에서 같은 경로를 지날 수 없습니다.
                 -각 코스는 서로 겹치지 않게 구성해주세요.
                 -각 코스에는 id, description, estimatedTime, waypoint(lat,lng)를 포함한 JSON 형태로 응답해주세요.
@@ -149,6 +150,11 @@ public class WalkRecommendationService {
             organization = organizationRepository.findById(req.getOrgId())
                     .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
         }
+        var routeDto = req.getSelectedRoute();
+        if (routeDto == null || routeDto.getWaypoints() == null || routeDto.getWaypoints().isEmpty()) {
+            throw new IllegalArgumentException("선택 경로가 비어있습니다(waypoints 없음).");
+        }
+
 
         WalkRecommendation route = WalkRecommendation.builder()
                 .user(user)

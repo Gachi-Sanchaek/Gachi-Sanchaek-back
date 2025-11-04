@@ -29,7 +29,7 @@ public class WalkRecommendation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "organization_id", nullable = true)
     private Organization organization;
 
@@ -43,7 +43,7 @@ public class WalkRecommendation {
     private int plannedMinutes;  // 사용자가 설정한 산책 시간
 
     @Convert(converter = WaypointConverter.class)
-    @Column(nullable = false, columnDefinition = "json")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private List<Waypoint> wayPoints;
 
     @CreationTimestamp

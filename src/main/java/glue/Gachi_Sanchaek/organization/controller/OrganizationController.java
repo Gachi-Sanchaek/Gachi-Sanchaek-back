@@ -8,6 +8,7 @@ import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.organization.service.KakaoMapService;
 
 import glue.Gachi_Sanchaek.organization.service.OrganizationService;
+import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/organization")
+@RequestMapping("/api/v1/organizations")
 public class OrganizationController {
 
     private final KakaoMapService kakaoMapService;
@@ -25,7 +26,7 @@ public class OrganizationController {
 
     @GetMapping("/nearby")
     public ResponseEntity<ApiResponse<List<OrganizationDTO>>> searchOrganization(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam int radius,
@@ -37,11 +38,11 @@ public class OrganizationController {
 
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<OrganizationResponse>> selectOrganization(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String keyword,
             @RequestBody OrganizationDTO selectedOrg){
 
-        OrganizationResponse saved = organizationService.saveSelectedOrganization(keyword,selectedOrg);
+        OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), keyword,selectedOrg);
 
         return ResponseEntity.ok(ApiResponse.onSuccess(saved));
     }
