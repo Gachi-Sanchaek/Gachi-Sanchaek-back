@@ -10,6 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = {"user", "organization"}, callSuper = false)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "organization_id"})})
 public class UserOrganization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
