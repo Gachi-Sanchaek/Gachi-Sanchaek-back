@@ -1,26 +1,6 @@
 version: "3.8"
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - backend-network
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   backend:
     build:
       context: .
@@ -35,8 +15,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-      KAKAO_LOGIN_CLIENT_ID: ${CLIENT_ID}
-      KAKAO_LOGIN_REDIRECT_URI: ${REDIRECT_URI}
+      KAKAO_LOGIN_CLIENT_ID: ${KAKAO_LOGIN_CLIENT_ID}
+      KAKAO_LOGIN_REDIRECT_URI: ${KAKAO_LOGIN_REDIRECT_URI}
       KAKAO_MAP_API_KEY: ${KAKAO_MAP_API_KEY}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       JWT_SECRET: ${JWT_SECRET}
