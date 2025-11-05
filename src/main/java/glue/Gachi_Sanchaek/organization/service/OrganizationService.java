@@ -28,28 +28,22 @@ public class OrganizationService {
 
         Organization.OrganizationCategory category = mapKeywordToCategory(keyword);
 
-        Organization org;
-        boolean exists = organizationRepository.existsByKakaoPlaceId(selectedOrg.getKakaoId());
-
-        if (exists) {  // 이미 기관엔티티에 저장되어있어서 재사용
-            org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
-                    .orElseThrow(() -> new IllegalStateException("exists=true 인데 Organization이 없음"));
-        }else{
-            org = Organization.builder()
-                    .kakaoPlaceId(selectedOrg.getKakaoId())
-                    .name(selectedOrg.getName())
-                    .phone(selectedOrg.getPhone())
-                    .address(selectedOrg.getAddress())
-                    .latitude(selectedOrg.getLatitude())
-                    .longitude(selectedOrg.getLongitude())
-                    .category(category)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-            org = organizationRepository.save(org);
-        }
+        Organization org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
+                .orElseGet(() -> organizationRepository.save(
+                        Organization.builder()
+                                .kakaoPlaceId(selectedOrg.getKakaoId())
+                                .name(selectedOrg.getName())
+                                .phone(selectedOrg.getPhone())
+                                .address(selectedOrg.getAddress())
+                                .latitude(selectedOrg.getLatitude())
+                                .longitude(selectedOrg.getLongitude())
+                                .category(category)
+                                .createdAt(LocalDateTime.now())
+                                .build()
+                ));
 
         //유저-기관 에 저장이 안되어있음!
-        if(!userOrganizationRepository.existsByUserIdAndOrganizationId(userId, org.getId())) {
+        if(!userOrganizationRepository.existsByUser_IdAndOrganization_Id(userId, org.getId())) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다"));
 

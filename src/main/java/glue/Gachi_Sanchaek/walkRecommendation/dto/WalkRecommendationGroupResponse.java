@@ -13,5 +13,6 @@ import java.util.List;
 @Builder
 public class WalkRecommendationGroupResponse {
     private String recommendationGroupId;
+    private Long orgId;
     private List<WalkRouteResponse> routes;
 }

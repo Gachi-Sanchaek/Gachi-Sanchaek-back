@@ -65,10 +65,19 @@ public class GeminiService {
                .bodyValue(requestBody)
                .retrieve()
                .onStatus(HttpStatusCode::isError, r ->
-                    r.bodyToMono(String.class).flatMap(body ->
-                       Mono.error(new RuntimeException("Gemini Error " + r.statusCode() + ": " + body)))
+                    r.bodyToMono(String.class).flatMap(body -> {
+                        if (r.statusCode().is5xxServerError()) {
+                            return Mono.error(new ServerOverloadException("Gemini Server Error " + r.statusCode() + ": " + body));
+                        }
+                        return Mono.error(new RuntimeException("Gemini Error " + r.statusCode() + ": " + body));
+                    })
                )
                .bodyToMono(GeminiResponse.class)
+               .retryWhen(reactor.util.retry.Retry.backoff(3, Duration.ofSeconds(2)) // 최대 3번, 2초 간격으로 재시도
+                       .filter(throwable -> throwable instanceof ServerOverloadException)
+                       .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) ->
+                                       new RuntimeException("Gemini API is unavailable after multiple retries.", retrySignal.failure())
+                       ))
                .block();
 
        if (res == null || res.getCandidates() == null || res.getCandidates().isEmpty()) {
@@ -85,4 +94,9 @@ public class GeminiService {
 
    }
 
+}
+class ServerOverloadException extends RuntimeException {
+    public ServerOverloadException(String message) {
+        super(message);
+    }
 }

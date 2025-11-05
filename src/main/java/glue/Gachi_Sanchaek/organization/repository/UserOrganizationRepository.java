@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserOrganizationRepository extends JpaRepository<UserOrganization, Long> {
-    boolean existsByUserIdAndOrganizationId(Long userId, Long organizationId);
+    boolean existsByUser_IdAndOrganization_Id(Long userId, Long organizationId);
 }

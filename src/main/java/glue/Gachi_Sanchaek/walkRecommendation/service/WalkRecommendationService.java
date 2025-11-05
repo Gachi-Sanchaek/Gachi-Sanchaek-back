@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.organization.repository.OrganizationRepository;
+import glue.Gachi_Sanchaek.organization.repository.UserOrganizationRepository;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.repository.UserRepository;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.*;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class WalkRecommendationService {
 
     private final OrganizationRepository organizationRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
     private final GeminiService geminiService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserRepository userRepository;
@@ -31,11 +33,14 @@ public class WalkRecommendationService {
     public WalkRecommendationGroupResponse recommendRoutes(Long orgId, int minutes, double currentLat,double currentLng) {
 
         String prompt;
+        Long organizationIdForResponse = null;
+
         //기관 ID가 있을 때
         if(orgId != null) {
             Organization org = organizationRepository.findById(orgId)
                     .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
             prompt = buildPromptWithOrg(org, minutes);
+            organizationIdForResponse = org.getId();
         }else { // 기관 ID가 없을 때
             prompt = buildPromptGeneral(currentLat, currentLng, minutes);
         }
@@ -45,12 +50,12 @@ public class WalkRecommendationService {
         // JSON 파싱해서 DTO 변환
         List<WalkRouteResponse> routes = parseRoutes(geminiResult);
 
-        WalkRecommendationGroupResponse group = WalkRecommendationGroupResponse.builder()
+        return WalkRecommendationGroupResponse.builder()
                 .recommendationGroupId(UUID.randomUUID().toString())
+                .orgId(organizationIdForResponse)
                 .routes(routes)
                 .build();
 
-        return group;
     }
 
     private String buildPromptWithOrg(Organization org, int minutes) {
@@ -121,10 +126,26 @@ public class WalkRecommendationService {
             JsonNode node = objectMapper.readTree(json);
             List<WalkRouteResponse> routes = new ArrayList<>();
 
-            for (JsonNode routeNode : node.get("routes")) {
+            JsonNode routesNode = node.get("routes");
+            if (routesNode == null || !routesNode.isArray()) {
+                // "routes" 필드가 없거나 배열이 아니면 유효하지 않은 응답으로 처리
+                throw new IllegalArgumentException("Gemini 응답 JSON에 'routes' 배열이 없습니다.");
+            }
+
+            for (JsonNode routeNode : routesNode) {
+                if (routeNode.get("id") == null || routeNode.get("description") == null || routeNode.get("waypoints") == null || routeNode.get("estimatedTime") == null) {
+                    System.err.println("경로 항목에서 필수 필드가 누락되었습니다: " + routeNode.toString());
+                    continue;
+                }
+
                 List<Waypoint> waypoints = new ArrayList<>();
-                for (JsonNode wp : routeNode.get("waypoints")) {
-                    waypoints.add(new Waypoint(wp.get("lat").asDouble(), wp.get("lng").asDouble()));
+                JsonNode waypointsNode = routeNode.get("waypoints");
+                if(waypointsNode.isArray()) {
+                    for (JsonNode wp : waypointsNode) {
+                        if (wp.get("lat") != null && wp.get("lng") != null) {
+                            waypoints.add(new Waypoint(wp.get("lat").asDouble(), wp.get("lng").asDouble()));
+                        }
+                    }
                 }
 
                 routes.add(WalkRouteResponse.builder()
@@ -136,36 +157,49 @@ public class WalkRecommendationService {
             }
             return routes;
         } catch (Exception e) {
-            throw new RuntimeException("Gemini 응답 파싱 실패: " + e.getMessage(), e);
+            throw new RuntimeException("Gemini 응답 파싱 실패: " +json +"/ 에러: "+ e.getMessage(), e);
         }
     }
 
     @Transactional
     public SaveWalkRouteResponse saveSelectedRoute(Long userId, WalkRouteSelectionRequest req) {
+        // 유저 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
 
-        Organization organization = null; // 미리초기화
-        if(req.getOrgId() != null){
-            organization = organizationRepository.findById(req.getOrgId())
-                    .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
-        }
+        //경로값 존재 확인
         var routeDto = req.getSelectedRoute();
         if (routeDto == null || routeDto.getWaypoints() == null || routeDto.getWaypoints().isEmpty()) {
             throw new IllegalArgumentException("선택 경로가 비어있습니다(waypoints 없음).");
         }
 
+        //기관 검증
+        Organization organization = null; // 미리초기화
+        if(req.getOrgId() != null){
+            Long orgId = req.getOrgId();
+            organization = organizationRepository.findById(orgId)
+                    .orElseThrow(() -> new IllegalArgumentException("기관을 찾을 수 없습니다"));
 
-        WalkRecommendation route = WalkRecommendation.builder()
+            boolean linked = userOrganizationRepository
+                    .existsByUser_IdAndOrganization_Id(userId,orgId);
+
+            if(!linked){
+                throw new IllegalArgumentException("해당 기관(ID: " + orgId + ")은 사용자가 저장한 기관이 아닙니다. 권한 없음.");
+            }
+        }
+
+
+        // 저장
+        WalkRecommendation entity = WalkRecommendation.builder()
                 .user(user)
                 .organization(organization)
                 .groupId(req.getGroupId())
-                .description(req.getSelectedRoute().getDescription())
-                .plannedMinutes(req.getSelectedRoute().getEstimatedTime())
-                .wayPoints(req.getSelectedRoute().getWaypoints())
+                .description(routeDto.getDescription())
+                .plannedMinutes(routeDto.getEstimatedTime())
+                .wayPoints(routeDto.getWaypoints())
                 .build();
 
-        WalkRecommendation savedRoute = walkRecommendationRepository.save(route);
+        WalkRecommendation savedRoute = walkRecommendationRepository.save(entity);
 
         return SaveWalkRouteResponse.builder()
                 .walkRecommendationId(savedRoute.getId())
