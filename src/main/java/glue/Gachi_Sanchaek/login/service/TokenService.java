@@ -27,7 +27,7 @@ public class TokenService {
     @Value("${jwt.refresh-expiration-sec:2592000}")
     private Long refreshExpirationMs;
 
-    private final String REFRESH_TOKEN_PREFIX = "refresh1:";
+    private final String REFRESH_TOKEN_PREFIX = "refresh:";
 
     public String createAccessToken(Long userId, String role) {
         return createAccessToken(userId, role,  accessExpirationMs);
