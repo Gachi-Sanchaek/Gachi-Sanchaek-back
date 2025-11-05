@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.login.service;
 
+import glue.Gachi_Sanchaek.redis.service.RedisService;
 import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.service.UserService;
@@ -11,24 +12,20 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.Duration;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.lenient; // <<< import 추가
 
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest {
@@ -37,13 +34,12 @@ class TokenServiceTest {
     private JWTUtil jwtUtil;
 
     @Mock
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisService redisService;
+
 
     @Mock
     private UserService userService;
 
-    @Mock
-    private ValueOperations<String, String> valueOperations;
 
     @InjectMocks
     private TokenService tokenService;
@@ -58,7 +54,6 @@ class TokenServiceTest {
         ReflectionTestUtils.setField(tokenService, "accessExpirationMs", 3600000L); // 1시간
         ReflectionTestUtils.setField(tokenService, "refreshExpirationMs", 86400000L); // 24시간
 
-        lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
 
     @Test
@@ -96,21 +91,16 @@ class TokenServiceTest {
         // then
         assertThat(refreshToken).isNotNull();
 
-        verify(valueOperations).set(
+        verify(redisService).save(
                 redisKeyCaptor.capture(),
-                anyString(),
-                any(Duration.class)
+                eq(String.valueOf(userId)),
+                eq(expectedDurationMillis)
         );
 
         String capturedKey = redisKeyCaptor.getValue();
         assertThat(capturedKey).startsWith(REFRESH_TOKEN_PREFIX);
-        assertThat(capturedKey.length()).isGreaterThan(REFRESH_TOKEN_PREFIX.length());
-
-        verify(valueOperations).set(
-                capturedKey,
-                String.valueOf(userId),
-                Duration.ofMillis(expectedDurationMillis)
-        );
+        assertThat(capturedKey).endsWith(refreshToken);
+        assertThat(capturedKey).isEqualTo(REFRESH_TOKEN_PREFIX + refreshToken);
     }
 
     @Test
@@ -121,16 +111,14 @@ class TokenServiceTest {
         String expectedUserId = "1";
         String key = REFRESH_TOKEN_PREFIX + token;
 
-        when(valueOperations.get(key)).thenReturn(expectedUserId);
-
+        when(redisService.get(key)).thenReturn(expectedUserId);
 
         // when
         Optional<String> result = tokenService.validateRefreshToken(token);
 
-
         // then
         assertThat(result).isPresent().contains(expectedUserId);
-        verify(valueOperations).get(key);
+        verify(redisService).get(key);
     }
 
     @Test
@@ -139,16 +127,15 @@ class TokenServiceTest {
         // given
         String token = "invalid-token";
         String key = REFRESH_TOKEN_PREFIX + token;
-        when(valueOperations.get(key)).thenReturn(null);
 
+        when(redisService.get(key)).thenReturn(null);
 
         // when
         Optional<String> result = tokenService.validateRefreshToken(token);
 
-
         // then
         assertThat(result).isEmpty();
-        verify(valueOperations).get(key);
+        verify(redisService).get(key);
     }
 
     @Test
@@ -160,11 +147,11 @@ class TokenServiceTest {
         String userId = "1";
         String newAccessToken = "new-access-token";
 
-        User mockUser = Mockito.mock(User.class);
+        User mockUser = mock(User.class);
         when(mockUser.getId()).thenReturn(1L);
         when(mockUser.getRole()).thenReturn("ROLE_USER");
 
-        when(valueOperations.get(key)).thenReturn(userId);
+        when(redisService.get(key)).thenReturn(userId);
         when(userService.findById(1L)).thenReturn(mockUser);
         when(jwtUtil.createJwt(1L, "ROLE_USER", 3600000L)).thenReturn(newAccessToken);
 
@@ -173,7 +160,7 @@ class TokenServiceTest {
 
         // then
         assertThat(result).isEqualTo(newAccessToken);
-        verify(valueOperations).get(key);
+        verify(redisService).get(key);
         verify(userService).findById(1L);
         verify(jwtUtil).createJwt(1L, "ROLE_USER", 3600000L);
     }
@@ -185,17 +172,15 @@ class TokenServiceTest {
         String refreshToken = "invalid-token";
         String key = REFRESH_TOKEN_PREFIX + refreshToken;
 
-        when(valueOperations.get(key)).thenReturn(null);
-
+        when(redisService.get(key)).thenReturn(null);
 
         // when & then
         assertThatThrownBy(() -> tokenService.reissueAccessToken(refreshToken))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Refresh token is invalid or expired.");
 
-        verify(valueOperations).get(key);
+        verify(redisService).get(key);
         verify(userService, never()).findById(anyLong());
         verify(jwtUtil, never()).createJwt(anyLong(), anyString(), anyLong());
     }
 }
-
