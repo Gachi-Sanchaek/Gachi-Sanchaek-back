@@ -10,11 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -64,13 +67,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            request.setAttribute("exception", "TOKEN_EXPIRED");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-//            throw new BadCredentialsException("JWT token has expired.");
+            log.warn("JWT token has expired: {}", e.getMessage());
+            throw new BadCredentialsException("JWT token has expired.");
         } catch (JwtException e){
-            request.setAttribute("exception", "INVALID_TOKEN");
-//            throw new BadCredentialsException("Invalid JWT token.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            log.warn("Invalid JWT token: {}", e.getMessage());
+            throw new BadCredentialsException("Invalid JWT token.");
         }
     }
 
