@@ -15,6 +15,8 @@ import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import glue.Gachi_Sanchaek.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -28,6 +30,7 @@ public class WalkService {
     private final PointLogService pointLogService;
     private final RankingService rankingService;
     private final WalkRecommendationRepository walkRecommendationRepository;
+    private final GeminiWalkService geminiWalkService;
 
 
     public WalkResponse startWalk(WalkStartRequest request, Long userId) {
@@ -59,14 +62,97 @@ public class WalkService {
                         .startTime(walkRecord.getStartTime())
                         .build();
     }
+
+    //일반 산책 시 산책 종료 메서드
     public WalkEndResponse endWalk(Long userId, Long walkId) {
+        WalkRecord walk = getWalkOrThrow(walkId);
+        return finalizeWalk(userId,walk,"산책 종료 완료");
+    }
+
+    //QR인식
+    public Object handleQrScan(Long userId, String qrToken){
+        WalkRecord walk = walkRecordRepository
+                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
+                .orElseThrow(() -> new IllegalArgumentException("QR 인증 대상 산책 세션이 존재하지 않습니다"));
+
+        //처음 스캔할 때
+        if(walk.getStatus()==WalkStatus.WAITING){
+            walk.setQrToken(qrToken);
+            walk.setStatus(WalkStatus.ONGOING);
+            walkRecordRepository.save(walk);
+
+            return WalkResponse.builder()
+                    .walkId(walk.getId())
+                    .status(WalkStatus.ONGOING)
+                    .walkType(walk.getWalkType())
+                    .verificationMethod(walk.getVerificationMethod())
+                    .startTime(walk.getStartTime())
+                    .build();
+        }
+        else if(walk.getStatus()==WalkStatus.ONGOING
+                && walk.getQrToken().equals(qrToken)){
+            return finalizeWalk(userId,walk,"QR 인증 성공, 산책 종료 완료");
+        }
+        else{
+            throw new IllegalArgumentException("잘못된 QR 인증 시도입니다");
+        }
+    }
+
+    //플로깅 AI인증
+    public WalkEndResponse verifyPlogging(Long userId, Long walkId, MultipartFile image ){
+        WalkRecord walk = getWalkOrThrow(walkId);
+
+        //산책 상태 검증
+        if(walk.getVerificationMethod()!=VerificationMethod.AI){
+            throw new IllegalArgumentException("플로깅 인증 대상 산책이 아닙니다.");
+        }
+        if(walk.getStatus()!=WalkStatus.ONGOING){
+            throw new IllegalArgumentException("진행 중인 산책만 플로깅 인증이 가능합니다.");
+        }
+        //이미지 AI 분석
+        int trashCount = geminiWalkService.countTrashImage(image);
+
+        //인증 실패 시
+        if(trashCount<10){
+            return WalkEndResponse.builder()
+                    .walkId(walkId)
+                    .totalDistance(walkLocationService.getTotalDistance(walkId))
+                    .totalMin(walkLocationService.getTotalMinutes(walkId))
+                    .pointsEarned(0L)
+                    .message("플로깅 인증 실패 - 쓰레기 개수 부족 ("+trashCount+"개)")
+                    .build();
+        }
+
+        //인증 성공 시
+        return finalizeWalk(userId, walk, "플로깅 인증 성공 ("+trashCount+"개 감지됨), 산책 종료 완료");
+    }
+
+    // 리워드 계산
+    private int calculateReward(String walkType, double distanceKm){
+        //거리 기반 기본 포인트 : 1km당 100점 (반올림)
+        int basePoints = (int)Math.round(distanceKm*100);
+
+        //산책 타입에 따른 추가 포인트
+        int bonusPoints = switch(walkType.toUpperCase()){
+            case "SENIOR" -> 400;
+            case "DOG" -> 300;
+            case "PLOGGING" -> 200;
+            default -> 0;
+        };
+        return basePoints + bonusPoints;
+    }
+    public void onWebSocketConnect(Long walkId) {
         WalkRecord walk = walkRecordRepository.findById(walkId)
-                .orElseThrow(()-> new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다"));
+                .orElseThrow(()->new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다."));
+        if(walk.getVerificationMethod()!= VerificationMethod.QR
+                && walk.getStatus() == WalkStatus.WAITING){
+            walk.setStatus(WalkStatus.ONGOING);
+            walkRecordRepository.save(walk);
+        }
+    }
 
-        double distanceKm = walkLocationService.getTotalDistance(walkId);
-        long totalMinutes = walkLocationService.getTotalMinutes(walkId);
-        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),distanceKm));
-
+    //리워드 랭킹 후처리 메서드
+    private void processAfterWalk(Long userId, WalkRecord walk, long reward){
         //산책 타입
         String type = walk.getWalkType();
 
@@ -84,74 +170,37 @@ public class WalkService {
                     })
                     .orElse("NORMAL");
         }
-        //WalkRecord 업데이트
-        walk.setStatus(WalkStatus.FINISHED);
-        walk.setEndTime(LocalDateTime.now());
-        walkRecordRepository.save(walk);
 
         //후처리 호출 : 포인트 및 순위 갱신
         userService.recordWalkingResult(userId,reward);
         pointLogService.save(walk.getUser(),reward,type,locationName);
         rankingService.updateRanking(userId,reward);
+    }
 
-        //DTO로 반환
+    //산책 종료 공통 로직
+    private WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message){
+
+        double distanceKm = walkLocationService.getTotalDistance(walk.getId());
+        long totalMinutes = walkLocationService.getTotalMinutes(walk.getId());
+        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),distanceKm));
+
+        //인증 성공 시 - WalkRecord 업데이트
+        walk.setStatus(WalkStatus.FINISHED);
+        walk.setEndTime(LocalDateTime.now());
+        walkRecordRepository.save(walk);
+
+        processAfterWalk(userId,walk,reward);
+
         return WalkEndResponse.builder()
-                .walkId(walkId)
+                .walkId(walk.getId())
                 .totalDistance(distanceKm)
                 .totalMin(totalMinutes)
                 .pointsEarned(reward)
-                .message("산책 종료 완료")
+                .message(message)
                 .build();
     }
-
-    //QR인식
-    public WalkResponse handleQrScan(Long userId, String qrToken){
-        WalkRecord walk = walkRecordRepository
-                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
-                .orElseThrow(() -> new IllegalArgumentException("QR 인증 대상 산책 세션이 존재하지 않습니다"));
-
-        //처음 스캔할 때
-        if(walk.getQrToken()==null){
-            walk.setQrToken(qrToken);
-            walk.setStatus(WalkStatus.ONGOING);
-            walkRecordRepository.save(walk);
-
-            return WalkResponse.builder()
-                    .walkId(walk.getId())
-                    .status(walk.getStatus())
-                    .walkType(walk.getWalkType())
-                    .verificationMethod(walk.getVerificationMethod())
-                    .startTime(walk.getStartTime())
-                    .build();
-        }
-
-        //두번째 스캔 - QR 일치하면 FINISHED 처리
-        if(walk.getQrToken().equals(qrToken)){
-            walk.setStatus(WalkStatus.FINISHED);
-            walk.setEndTime(LocalDateTime.now());
-            walkRecordRepository.save(walk);
-
-            return WalkResponse.builder()
-                    .walkId(walk.getId())
-                    .status(walk.getStatus())
-                    .walkType(walk.getWalkType())
-                    .verificationMethod(walk.getVerificationMethod())
-                    .startTime(walk.getStartTime())
-                    .build();
-        }
-        throw new IllegalArgumentException("산책 전후 QR 코드가 일치하지 않습니다");
-    }
-    private int calculateReward(String walkType, double distanceKm){
-        //거리 기반 기본 포인트 : 1km당 100점 (반올림)
-        int basePoints = (int)Math.round(distanceKm*100);
-
-        //산책 타입에 따른 추가 포인트
-        int bonusPoints = switch(walkType){
-            case "SENIOR" -> 400;
-            case "DOG" -> 300;
-            case "PLOGGING" -> 200;
-            default -> 0;
-        };
-        return basePoints + bonusPoints;
+    private WalkRecord getWalkOrThrow(Long walkId){
+        return walkRecordRepository.findById(walkId)
+                .orElseThrow(()-> new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다"));
     }
 }

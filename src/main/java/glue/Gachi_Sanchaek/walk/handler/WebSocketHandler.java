@@ -3,6 +3,7 @@ package glue.Gachi_Sanchaek.walk.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import glue.Gachi_Sanchaek.walk.dto.WalkProgressResponse;
 import glue.Gachi_Sanchaek.walk.service.WalkLocationService;
+import glue.Gachi_Sanchaek.walk.service.WalkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final WalkLocationService walkLocationService;
+    private final WalkService walkService;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -28,6 +30,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             if (session.getAttributes().get("walkId") == null) {
                 session.getAttributes().put("walkId", walkId);
+                walkService.onWebSocketConnect(walkId);
                 log.info("[WS] 세션 시작: session_id={}, walkId={}", session.getId(), walkId);
             }
 

@@ -23,9 +23,9 @@ public class GeminiWalkService {
     public GeminiWalkService(
             @Value("${gemini.api.key}") String apiKey,
             @Value("${gemini.model-name}") String modelName,
-            ObjectMapper objectMapper) { // 4. Spring이 ObjectMapper를 주입해줌
+            ObjectMapper objectMapper) {
 
-        this.objectMapper = objectMapper; // 5. 주입받은 객체 저장
+        this.objectMapper = objectMapper;
         this.modelName = modelName;
 
         this.webClient = WebClient.builder()

@@ -40,31 +40,23 @@ public class WalkController {
     }
 
     @PostMapping("/plogging")
-    public ResponseEntity<ApiResponse<?>> pLogging(
+    public ResponseEntity<ApiResponse<WalkEndResponse>> pLogging(
             @RequestParam("image") MultipartFile image,
             @RequestParam("walkId") Long walkId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        int trashCount = geminiWalkService.countTrashImage(image);
-
-        if(trashCount >= 10){
-            WalkEndResponse response = walkService.endWalk(userId, walkId);
-            return (ResponseEntity<ApiResponse<?>>) (ResponseEntity<?>) ApiResponse.ok(response, "플로깅 검증 성공");
-        }
-        else{
-            String message = "플로깅 검증 실패. 10개 이상의 쓰레기가 필요합니다";
-            return (ResponseEntity<ApiResponse<?>>) (ResponseEntity<?>) ApiResponse.badRequest(message);
-        }
+        WalkEndResponse response = walkService.verifyPlogging(userId, walkId, image);
+        return ApiResponse.ok(response,response.getMessage());
     }
 
     @PostMapping("/qr")
-    public ResponseEntity<ApiResponse<WalkResponse>> veriftQr(
+    public ResponseEntity<ApiResponse<Object>> verifyQr(
             @RequestParam("qrToken") String qrToken,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        WalkResponse response = walkService.handleQrScan(userId,qrToken);
+        Object response = walkService.handleQrScan(userId,qrToken);
         return ApiResponse.ok(response,"QR 인증 처리 완료");
     }
 
