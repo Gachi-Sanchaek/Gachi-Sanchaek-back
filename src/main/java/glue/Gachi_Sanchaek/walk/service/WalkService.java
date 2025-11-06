@@ -154,4 +154,12 @@ public class WalkService {
         };
         return basePoints + bonusPoints;
     }
+    public void onWebSocketConnect(Long walkId) {
+        WalkRecord walk = walkRecordRepository.findById(walkId)
+                .orElseThrow(()->new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다."));
+        if(walk.getStatus() == WalkStatus.WAITING){
+            walk.setStatus(WalkStatus.ONGOING);
+            walkRecordRepository.save(walk);
+        }
+    }
 }
