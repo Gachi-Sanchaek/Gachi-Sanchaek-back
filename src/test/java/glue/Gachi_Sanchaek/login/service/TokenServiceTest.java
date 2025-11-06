@@ -51,8 +51,8 @@ class TokenServiceTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(tokenService, "accessExpirationMs", 3600000L); // 1시간
-        ReflectionTestUtils.setField(tokenService, "refreshExpirationMs", 86400000L); // 24시간
+        ReflectionTestUtils.setField(tokenService, "accessExpirationSecond", 3600000L); // 1시간
+        ReflectionTestUtils.setField(tokenService, "refreshExpirationSecond", 86400000L); // 24시간
 
     }
 
