@@ -1,6 +1,7 @@
 package glue.Gachi_Sanchaek.organization.dto;
 
 import glue.Gachi_Sanchaek.organization.entity.Organization;
+import glue.Gachi_Sanchaek.organization.entity.OrganizationCategory;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,6 +17,6 @@ public class OrganizationResponse {
     private String address;
     private double latitude;
     private double longitude;
-    private Organization.OrganizationCategory category;
+    private OrganizationCategory category;
     private LocalDateTime createdAt;
 }

@@ -2,7 +2,6 @@ package glue.Gachi_Sanchaek.walkRecommendation.controller;
 
 import glue.Gachi_Sanchaek.util.ApiResponse;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.SaveWalkRouteResponse;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRecommendationGroupResponse;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRouteSelectionRequest;

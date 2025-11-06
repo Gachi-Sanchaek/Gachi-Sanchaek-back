@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Optional.empty;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/organizations")
