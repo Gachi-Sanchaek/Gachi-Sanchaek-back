@@ -22,29 +22,29 @@ public class TokenService {
     private final UserService userService;
 
     @Value("${jwt.access-expiration-sec:86400}")
-    private Long accessExpirationMs;
+    private Long accessExpirationSecond;
 
     @Value("${jwt.refresh-expiration-sec:2592000}")
-    private Long refreshExpirationMs;
+    private Long refreshExpirationSecond;
 
     private final String REFRESH_TOKEN_PREFIX = "refresh:";
 
     public String createAccessToken(Long userId, String role) {
-        return createAccessToken(userId, role,  accessExpirationMs);
+        return createAccessToken(userId, role,  accessExpirationSecond);
     }
 
-    public String createAccessToken(Long userId, String role, Long milliseconds) {
-        return jwtUtil.createJwt(userId, role, milliseconds);
+    public String createAccessToken(Long userId, String role, Long seconds) {
+        return jwtUtil.createJwt(userId, role, seconds);
     }
 
     public String createRefreshToken(Long userId) {
-        return createRefreshToken(userId, refreshExpirationMs);
+        return createRefreshToken(userId, refreshExpirationSecond);
     }
 
-    public String createRefreshToken(Long userId, Long milliseconds) {
+    public String createRefreshToken(Long userId, Long seconds) {
         String refreshToken = UUID.randomUUID().toString();
         String key = REFRESH_TOKEN_PREFIX + refreshToken;
-        redisService.save(key, String.valueOf(userId), milliseconds);
+        redisService.save(key, String.valueOf(userId), seconds);
         return refreshToken;
     }
 

@@ -29,12 +29,12 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(Long id, String role, Long expiredMs) {
+    public String createJwt(Long id, String role, Long expiredSeconds) {
         return Jwts.builder()
                 .claim("userId", id)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) //발행시간
-                .expiration(new Date(System.currentTimeMillis() + expiredMs)) //만료시간
+                .expiration(new Date(System.currentTimeMillis() + expiredSeconds*1000)) //만료시간
                 .signWith(secretKey)
                 .compact();
     }
