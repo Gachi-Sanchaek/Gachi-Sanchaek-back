@@ -26,7 +26,10 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("개발용 서버")
+                                .description("개발용 로컬 서버"),
+                        new Server()
+                                .url("http://13.124.32.133:8080")
+                                .description("운영 서버")
                 ))
                 .components(new Components()
                         .addSecuritySchemes("JWT", new SecurityScheme()
