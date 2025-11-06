@@ -6,6 +6,7 @@ import glue.Gachi_Sanchaek.security.jwt.JWTFilter;
 import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,38 +40,42 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+
+                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+
                 .authorizeHttpRequests((auth) -> auth // 특정 경로에 대한 권한 설정
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
+
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler(accessDeniedHandler) // 403
+                        .authenticationEntryPoint(authenticationEntryPoint) // 401
+                );
 
         http
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
                         return configuration;
                     }
                 })));
-
-        http
-                .exceptionHandling(ex -> ex
-                        .accessDeniedHandler(accessDeniedHandler) // 403
-                        .authenticationEntryPoint(authenticationEntryPoint) // 401
-                );
 
         return http.build();
     }
