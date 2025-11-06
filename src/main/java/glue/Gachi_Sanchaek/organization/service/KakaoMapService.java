@@ -1,13 +1,17 @@
 package glue.Gachi_Sanchaek.organization.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import glue.Gachi_Sanchaek.exception.KakaoMapApiException;
 import glue.Gachi_Sanchaek.organization.dto.KakaoPlaceResponse;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +47,20 @@ public class KakaoMapService {
                         .build(true))
                 .header("Authorization", "KakaoAK " + kakaoApiKey)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, res ->
+                        res.bodyToMono(String.class)
+                                .flatMap(body -> Mono.error(
+                                        new KakaoMapApiException(HttpStatus.BAD_GATEWAY,
+                                                "Kakao 4xx error: " + body))
+                                )
+                )
+                .onStatus(HttpStatusCode::is5xxServerError, res ->
+                        res.bodyToMono(String.class)
+                                .flatMap(body -> Mono.error(
+                                        new KakaoMapApiException(HttpStatus.BAD_GATEWAY,
+                                                "Kakao 5xx error: " + body))
+                                )
+                )
                 .bodyToMono(String.class)
                 .block();
 
@@ -67,8 +85,10 @@ public class KakaoMapService {
                         .distance(Integer.parseInt(doc.getDistance() == null ? "0" : doc.getDistance()))
                         .build())
                 .collect(Collectors.toList());
-    } catch (Exception e) {
-        e.printStackTrace();
+    } catch (KakaoMapApiException e){
+        throw e;
+    }
+    catch (Exception e) {
         throw new RuntimeException("카카오 API 호출 중 오류 발생: " + e.getMessage());
     }
 

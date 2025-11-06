@@ -1,21 +1,20 @@
 package glue.Gachi_Sanchaek.organization.controller;
 
-import glue.Gachi_Sanchaek.common.ApiResponse;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
-
 import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
-import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.organization.service.KakaoMapService;
-
 import glue.Gachi_Sanchaek.organization.service.OrganizationService;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.user.entity.User;
+import glue.Gachi_Sanchaek.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static java.util.Optional.empty;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/organizations")
@@ -33,7 +32,7 @@ public class OrganizationController {
             @RequestParam String keyword
     ){
         List<OrganizationDTO> result = kakaoMapService.searchNearbyOrganizations(lat,lng,radius,keyword);
-        return ResponseEntity.ok(ApiResponse.onSuccess(result));
+        return ApiResponse.ok(result);
     }
 
     @PostMapping("/select")
@@ -44,6 +43,6 @@ public class OrganizationController {
 
         OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), keyword,selectedOrg);
 
-        return ResponseEntity.ok(ApiResponse.onSuccess(saved));
+        return ApiResponse.ok(saved);
     }
 }
