@@ -41,9 +41,4 @@ public class Organization {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-
-    public enum OrganizationCategory{
-        SHELTER,  // 유기견 보호소
-        WELFARE   // 복지관
-    }
 }
