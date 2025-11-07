@@ -13,22 +13,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class VerificationService {
-    private final WalkRecordRepository walkRecordRepository;
     private final GeminiWalkService geminiWalkService;
     private final RewardService rewardService;
     private final WalkRecordService walkRecordService;
 
     //QR인식
     public Object handleQrScan(Long userId, String qrToken){
-        WalkRecord walk = walkRecordRepository
-                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId, VerificationMethod.QR)
-                .orElseThrow(() -> new IllegalArgumentException("QR 인증 대상 산책 세션이 존재하지 않습니다"));
+        WalkRecord walk = walkRecordService.findLatestQrWalk(userId);
 
         //처음 스캔할 때
         if(walk.getStatus()== WalkStatus.WAITING){
             walk.setQrToken(qrToken);
             walk.setStatus(WalkStatus.ONGOING);
-            walkRecordRepository.save(walk);
 
             return WalkResponse.builder()
                     .walkId(walk.getId())

@@ -1,7 +1,7 @@
 package glue.Gachi_Sanchaek.walk.service;
 
 import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.repository.UserRepository;
+import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
@@ -10,6 +10,7 @@ import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -17,12 +18,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class WalkRecordService {
     private final WalkRecordRepository walkRecordRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public WalkResponse startWalk(WalkStartRequest request, Long userId) {
-        User currentUser = userRepository.findById(userId)
-                .orElseThrow(()-> new IllegalArgumentException("User not found: "+userId));
-
+        User currentUser = userService.findById(userId);
 
         VerificationMethod verificationMethod = switch(request.getWalkType().toUpperCase()){
             case "PLOGGING" -> VerificationMethod.AI;
@@ -51,5 +50,19 @@ public class WalkRecordService {
     public WalkRecord getWalkOrThrow(Long walkId){
         return walkRecordRepository.findById(walkId)
                 .orElseThrow(()-> new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다"));
+    }
+    //웹소켓 연결 시 status = ONGOING (QR인증 제외)
+    public void onWebSocketConnect(Long walkId) {
+        WalkRecord walk = getWalkOrThrow(walkId);
+        if(walk.getVerificationMethod()!= VerificationMethod.QR
+                && walk.getStatus() == WalkStatus.WAITING){
+            walk.setStatus(WalkStatus.ONGOING);
+            walkRecordRepository.save(walk);
+        }
+    }
+    public WalkRecord findLatestQrWalk(Long userId){
+        return walkRecordRepository
+                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
+                .orElseThrow(()-> new IllegalArgumentException("QR 인증 대상 산책이 존재하지 않습니다"));
     }
 }

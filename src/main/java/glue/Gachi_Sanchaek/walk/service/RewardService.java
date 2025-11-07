@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 public class RewardService {
     private final WalkRecordRepository walkRecordRepository;
     private final WalkLocationService walkLocationService;
-    private final UserService userService;
-    private final PointLogService  pointLogService;
-    private final RankingService rankingService;
     private final WalkRecommendationRepository walkRecommendationRepository;
+    private final UserService userService;
+    private final PointLogService pointLogService;
+    private final RankingService rankingService;
 
     //산책 종료 공통 로직
     public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message){
