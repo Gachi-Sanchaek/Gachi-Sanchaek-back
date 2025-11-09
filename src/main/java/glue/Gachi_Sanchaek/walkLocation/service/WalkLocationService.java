@@ -1,9 +1,9 @@
-package glue.Gachi_Sanchaek.walk.service;
+package glue.Gachi_Sanchaek.walkLocation.service;
 
-import glue.Gachi_Sanchaek.walk.dto.WalkProgressResponse;
-import glue.Gachi_Sanchaek.walk.entity.WalkLocation;
-import glue.Gachi_Sanchaek.walk.handler.WalkLocationMessage;
-import glue.Gachi_Sanchaek.walk.repository.LocationRepository;
+import glue.Gachi_Sanchaek.walkLocation.dto.WalkProgressResponse;
+import glue.Gachi_Sanchaek.walkLocation.entity.WalkLocation;
+import glue.Gachi_Sanchaek.walkLocation.handler.WalkLocationMessage;
+import glue.Gachi_Sanchaek.walkLocation.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.Duration;

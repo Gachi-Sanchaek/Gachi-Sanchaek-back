@@ -7,6 +7,7 @@ import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
+import glue.Gachi_Sanchaek.walkLocation.service.WalkLocationService;
 import glue.Gachi_Sanchaek.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
