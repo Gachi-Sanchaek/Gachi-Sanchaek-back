@@ -1,4 +1,4 @@
-package glue.Gachi_Sanchaek.walk.handler;
+package glue.Gachi_Sanchaek.walkLocation.handler;
 
 import lombok.*;
 

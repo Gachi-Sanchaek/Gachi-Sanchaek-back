@@ -1,4 +1,4 @@
-package glue.Gachi_Sanchaek.walk.dto;
+package glue.Gachi_Sanchaek.walkLocation.dto;
 
 import lombok.Builder;
 import lombok.Getter;

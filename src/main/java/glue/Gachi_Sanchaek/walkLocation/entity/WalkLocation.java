@@ -1,6 +1,5 @@
-package glue.Gachi_Sanchaek.walk.entity;
+package glue.Gachi_Sanchaek.walkLocation.entity;
 
-import glue.Gachi_Sanchaek.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.*;

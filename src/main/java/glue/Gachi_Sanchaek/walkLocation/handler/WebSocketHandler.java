@@ -1,8 +1,8 @@
-package glue.Gachi_Sanchaek.walk.handler;
+package glue.Gachi_Sanchaek.walkLocation.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import glue.Gachi_Sanchaek.walk.dto.WalkProgressResponse;
-import glue.Gachi_Sanchaek.walk.service.WalkLocationService;
+import glue.Gachi_Sanchaek.walkLocation.dto.WalkProgressResponse;
+import glue.Gachi_Sanchaek.walkLocation.service.WalkLocationService;
 import glue.Gachi_Sanchaek.walk.service.WalkRecordService;
 import glue.Gachi_Sanchaek.walk.service.WalkService;
 import lombok.RequiredArgsConstructor;
