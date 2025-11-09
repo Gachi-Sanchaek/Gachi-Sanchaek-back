@@ -6,7 +6,6 @@ import glue.Gachi_Sanchaek.walk.dto.WalkEndRequest;
 import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
-import glue.Gachi_Sanchaek.walk.service.GeminiWalkService;
 import glue.Gachi_Sanchaek.walk.service.WalkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class WalkController {
     private final WalkService walkService;
-    private final GeminiWalkService geminiWalkService;
 
     @PostMapping("/start")
     public ResponseEntity<ApiResponse<WalkResponse>> startWalk(
