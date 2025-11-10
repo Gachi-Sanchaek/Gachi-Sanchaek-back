@@ -66,7 +66,10 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedOrigins(List.of(
+                                "http://localhost:5173",
+                                "https://gachi-sanchaek-front.vercel.app"
+                        ));
                         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
