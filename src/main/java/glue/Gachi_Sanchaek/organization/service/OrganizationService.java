@@ -38,9 +38,14 @@ public class OrganizationService {
                                 .latitude(selectedOrg.getLatitude())
                                 .longitude(selectedOrg.getLongitude())
                                 .category(category)
+                                .qrCodePayload(String.valueOf(selectedOrg.getKakaoId()))
                                 .createdAt(LocalDateTime.now())
                                 .build()
                 ));
+
+        if (org.getQrCodePayload() == null) {
+            org.setQrCodePayload(String.valueOf(org.getKakaoPlaceId()));
+        }
 
         //유저-기관 에 저장이 안되어있음!
         if(!userOrganizationRepository.existsByUser_IdAndOrganization_Id(userId, org.getId())) {

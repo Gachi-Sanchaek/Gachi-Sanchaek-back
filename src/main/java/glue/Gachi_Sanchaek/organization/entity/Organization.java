@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -37,6 +38,9 @@ public class Organization {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrganizationCategory category;
+
+    @Column(nullable = true, unique = true)
+    private String qrCodePayload;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

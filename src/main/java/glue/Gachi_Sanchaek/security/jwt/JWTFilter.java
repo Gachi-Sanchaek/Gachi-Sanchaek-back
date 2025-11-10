@@ -28,7 +28,8 @@ public class JWTFilter extends OncePerRequestFilter {
             "/h2-console",
             "/bonggong",
             "/swagger-ui",
-            "/v3/api-docs"
+            "/v3/api-docs",
+            "/api/v1/admin/export-organization-csv"
     );
 
     @Override
