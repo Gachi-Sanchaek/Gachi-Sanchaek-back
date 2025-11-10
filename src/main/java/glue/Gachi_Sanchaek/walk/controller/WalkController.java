@@ -2,10 +2,7 @@ package glue.Gachi_Sanchaek.walk.controller;
 
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.util.ApiResponse;
-import glue.Gachi_Sanchaek.walk.dto.WalkEndRequest;
-import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
-import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
-import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
+import glue.Gachi_Sanchaek.walk.dto.*;
 import glue.Gachi_Sanchaek.walk.service.WalkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +38,7 @@ public class WalkController {
             @RequestBody WalkEndRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails){
         Long userId = Long.parseLong(userDetails.getUsername());
-        WalkEndResponse response = walkService.endWalk(userId, request.getWalkId());
+        WalkEndResponse response = walkService.endWalk(userId, request);
         return ApiResponse.ok(response,"산책 종료 성공");
     }
 
@@ -49,20 +46,23 @@ public class WalkController {
     public ResponseEntity<ApiResponse<WalkEndResponse>> pLogging(
             @RequestParam("image") MultipartFile image,
             @RequestParam("walkId") Long walkId,
+            @RequestParam("totalDistance") Double totalDistance,
+            @RequestParam("totalMinutes") Integer totalMinutes,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        WalkEndResponse response = walkService.verifyPlogging(userId, walkId, image);
+        WalkEndResponse response = walkService.verifyPlogging(
+                userId, walkId, image,totalDistance,totalMinutes);
         return ApiResponse.ok(response,response.getMessage());
     }
 
     @PostMapping("/qr")
     public ResponseEntity<ApiResponse<Object>> verifyQr(
-            @RequestParam("qrToken") String qrToken,
+            @RequestBody QrVerificationRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        Object response = walkService.handleQrScan(userId,qrToken);
+        Object response = walkService.handleQrScan(userId,request);
         return ApiResponse.ok(response,"QR 인증 처리 완료");
     }
 

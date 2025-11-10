@@ -2,10 +2,10 @@ package glue.Gachi_Sanchaek.walk.service;
 
 import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
+import glue.Gachi_Sanchaek.walk.dto.QrVerificationRequest;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
-import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,12 +18,12 @@ public class VerificationService {
     private final WalkRecordService walkRecordService;
 
     //QR인식
-    public Object handleQrScan(Long userId, String qrToken){
+    public Object handleQrScan(Long userId, QrVerificationRequest request){
         WalkRecord walk = walkRecordService.findLatestQrWalk(userId);
 
         //처음 스캔할 때
         if(walk.getStatus()== WalkStatus.WAITING){
-            walk.setQrToken(qrToken);
+            walk.setQrToken(request.getQrToken());
             walk.setStatus(WalkStatus.ONGOING);
 
             return WalkResponse.builder()
@@ -35,8 +35,11 @@ public class VerificationService {
                     .build();
         }
         else if(walk.getStatus()==WalkStatus.ONGOING
-                && qrToken.equals(walk.getQrToken())){
-            return rewardService.finalizeWalk(userId,walk,"QR 인증 성공, 산책 종료 완료");
+                && request.getQrToken().equals(walk.getQrToken())){
+            return rewardService.finalizeWalk
+                    (userId,walk,"QR 인증 성공, 산책 종료 완료",
+                            request.getTotalDistance(),
+                            request.getTotalMinutes());
         }
         else{
             throw new IllegalArgumentException("잘못된 QR 인증 시도입니다");
@@ -44,7 +47,9 @@ public class VerificationService {
     }
 
     //플로깅 AI인증
-    public WalkEndResponse verifyPlogging(Long userId, Long walkId, MultipartFile image ){
+    public WalkEndResponse verifyPlogging(Long userId, Long walkId, MultipartFile image
+                                            ,Double totalDistance, Integer totalMinutes)
+    {
         WalkRecord walk = walkRecordService.getWalkOrThrow(walkId);
 
         //산책 상태 검증
@@ -67,6 +72,10 @@ public class VerificationService {
         }
 
         //인증 성공 시
-        return rewardService.finalizeWalk(userId, walk, "플로깅 인증 성공 ("+trashCount+"개 감지됨), 산책 종료 완료");
+        return rewardService.finalizeWalk(
+                userId, walk,
+                "플로깅 인증 성공 (" + trashCount + "개 감지됨), 산책 종료 완료",
+                totalDistance, totalMinutes
+        );
     }
 }

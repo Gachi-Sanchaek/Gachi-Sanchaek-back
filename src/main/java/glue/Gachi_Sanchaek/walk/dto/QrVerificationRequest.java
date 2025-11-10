@@ -5,8 +5,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class WalkEndRequest {
+
+public class QrVerificationRequest {
     private Long walkId;
+    private String qrToken;
     private Double totalDistance;
     private Integer totalMinutes;
 }
