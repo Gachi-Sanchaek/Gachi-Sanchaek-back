@@ -27,13 +27,41 @@ public class OrganizationService {
     public OrganizationResponse saveSelectedOrganization(
             Long userId, String keyword, OrganizationDTO selectedOrg) {
 
-        OrganizationCategory requiredCategory = mapKeywordToCategory(keyword);
+        OrganizationCategory category = mapKeywordToCategory(keyword);
 
+        // 객체 저장
         Organization org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
-                .orElseGet(() -> saveNewOrganization(selectedOrg, requiredCategory));
+                .orElseGet(() -> organizationRepository.save(
+                        Organization.builder()
+                                .kakaoPlaceId(selectedOrg.getKakaoId())
+                                .name(selectedOrg.getName())
+                                .phone(selectedOrg.getPhone())
+                                .address(selectedOrg.getAddress())
+                                .latitude(selectedOrg.getLatitude())
+                                .longitude(selectedOrg.getLongitude())
+                                .category(category)
+                                .qrCodePayload(String.valueOf(selectedOrg.getKakaoId()))
+                                .createdAt(LocalDateTime.now())
+                                .build()
+                ));
 
-        saveUserOrganizationIfNotExists(userId, org);
+        if (org.getQrCodePayload() == null) {
+            org.setQrCodePayload(String.valueOf(org.getKakaoPlaceId()));
+        }
 
+        //유저-기관 에 저장이 안되어있음!
+        if(!userOrganizationRepository.existsByUser_IdAndOrganization_Id(userId, org.getId())) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("유저 정보를 찾을 수 없습니다"));
+
+            userOrganizationRepository.save(
+                    UserOrganization.builder()
+                            .user(user)
+                            .organization(org)
+                            .build()
+            );
+        }
+        //DTO 반환
         return OrganizationResponse.builder()
                 .id(org.getId())
                 .kakaoId(org.getKakaoPlaceId())
@@ -47,42 +75,14 @@ public class OrganizationService {
                 .build();
     }
 
-    private Organization saveNewOrganization(OrganizationDTO dto, OrganizationCategory category) {
-        return organizationRepository.save(
-                Organization.builder()
-                        .kakaoPlaceId(dto.getKakaoId())
-                        .name(dto.getName())
-                        .phone(dto.getPhone())
-                        .address(dto.getAddress())
-                        .latitude(dto.getLatitude())
-                        .longitude(dto.getLongitude())
-                        .category(category)
-                        .createdAt(LocalDateTime.now())
-                        .build()
-
-        );
-    }
-
-    //  유저와 기관의 연결 정보가 없으면 새로 저장합니다.
-    private void saveUserOrganizationIfNotExists(Long userId, Organization org) {
-        if (!userOrganizationRepository.existsByUser_IdAndOrganization_Id(userId, org.getId())) {
-
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("유저 정보 ID " + userId + " 에 해당하는 정보를 찾을 수 없습니다"));
-
-            userOrganizationRepository.save(
-                    UserOrganization.builder()
-                            .user(user)
-                            .organization(org)
-                            .build()
-            );
-        }
-    }
-
-
+ 
     private OrganizationCategory mapKeywordToCategory(String keyword) {
-        if (keyword.contains("복지")) return OrganizationCategory.WELFARE;
-        if (keyword.contains("보호")) return OrganizationCategory.SHELTER;
+        if (keyword.equalsIgnoreCase("SENIOR") || keyword.contains("복지") || keyword.contains("노인")) {
+            return OrganizationCategory.WELFARE;
+        }
+        if (keyword.equalsIgnoreCase("ANIMAL") || keyword.contains("보호") || keyword.contains("유기")) {
+            return OrganizationCategory.SHELTER;
+        }
         throw new IllegalArgumentException("알 수 없는 카테고리: " + keyword);
     }
 }

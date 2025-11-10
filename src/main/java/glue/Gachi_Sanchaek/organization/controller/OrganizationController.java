@@ -3,6 +3,8 @@ package glue.Gachi_Sanchaek.organization.controller;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
 import glue.Gachi_Sanchaek.organization.service.KakaoMapService;
+
+import glue.Gachi_Sanchaek.organization.service.OrganizationSearchService;
 import glue.Gachi_Sanchaek.organization.service.OrganizationService;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.util.ApiResponse;
@@ -18,18 +20,19 @@ import java.util.List;
 @RequestMapping("/api/v1/organizations")
 public class OrganizationController {
 
-    private final KakaoMapService kakaoMapService;
+    private final OrganizationSearchService organizationSearchService;
     private final OrganizationService organizationService;
 
     @GetMapping("/nearby")
-    public ResponseEntity<ApiResponse<List<OrganizationDTO>>> searchOrganization(
+    public ResponseEntity<ApiResponse<List<OrganizationDTO>>> searchNearby(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam int radius,
-            @RequestParam String keyword
-    ){
-        List<OrganizationDTO> result = kakaoMapService.searchNearbyOrganizations(lat,lng,radius,keyword);
+            @RequestParam OrganizationSearchService.SearchType type
+            ){
+        List<OrganizationDTO> result = organizationSearchService.searchNearby(lat,lng,radius,type);
+    
         return ApiResponse.ok(result);
     }
 
