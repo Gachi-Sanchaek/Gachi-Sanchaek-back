@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -137,22 +138,19 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("POST /refresh - 리프레시 토큰이 비어있으면 예외 발생")
-    void refreshAccessToken_EmptyCookie() {
+    @DisplayName("POST /refresh - 리프레시 토큰이 비어있으면 400 예외 발생")
+    void refreshAccessToken_EmptyCookie() throws Exception {
         // given
         Cookie emptyCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, "");
 
         // when & then
-        ServletException exception = assertThrows(ServletException.class, () -> {
-            mockMvc.perform(post("/api/v1/auth/refresh")
-                    .cookie(emptyCookie)
-                    .with(csrf())
-                    .with(authentication(mockAuthentication)));
-        });
-
-        Throwable rootCause = exception.getRootCause();
-        assertThat(rootCause).isInstanceOf(IllegalArgumentException.class);
-        assertThat(rootCause.getMessage()).isEqualTo("Refresh token is missing.");
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(emptyCookie)
+                        .with(csrf())
+                        .with(authentication(mockAuthentication)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Refresh token is missing."));
     }
 }
 
