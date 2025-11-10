@@ -3,6 +3,7 @@ package glue.Gachi_Sanchaek.organization.service;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
 import glue.Gachi_Sanchaek.organization.entity.Organization;
+import glue.Gachi_Sanchaek.organization.entity.OrganizationCategory;
 import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
 import glue.Gachi_Sanchaek.organization.repository.OrganizationRepository;
 import glue.Gachi_Sanchaek.organization.repository.UserOrganizationRepository;
@@ -26,8 +27,9 @@ public class OrganizationService {
     public OrganizationResponse saveSelectedOrganization(
             Long userId, String keyword, OrganizationDTO selectedOrg) {
 
-        Organization.OrganizationCategory category = mapKeywordToCategory(keyword);
+        OrganizationCategory category = mapKeywordToCategory(keyword);
 
+        // 객체 저장
         Organization org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
                 .orElseGet(() -> organizationRepository.save(
                         Organization.builder()
@@ -59,6 +61,7 @@ public class OrganizationService {
                             .build()
             );
         }
+        //DTO 반환
         return OrganizationResponse.builder()
                 .id(org.getId())
                 .kakaoId(org.getKakaoPlaceId())
@@ -73,13 +76,14 @@ public class OrganizationService {
 
     }
 
-    private Organization.OrganizationCategory mapKeywordToCategory(String keyword) {
+    private OrganizationCategory mapKeywordToCategory(String keyword) {
         if (keyword.equalsIgnoreCase("SENIOR") || keyword.contains("복지") || keyword.contains("노인")) {
-            return Organization.OrganizationCategory.WELFARE;
+            return OrganizationCategory.WELFARE;
         }
         if (keyword.equalsIgnoreCase("ANIMAL") || keyword.contains("보호") || keyword.contains("유기")) {
-            return Organization.OrganizationCategory.SHELTER;
+            return OrganizationCategory.SHELTER;
         }
         throw new IllegalArgumentException("알 수 없는 카테고리: " + keyword);
     }
+
 }

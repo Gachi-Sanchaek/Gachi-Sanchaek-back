@@ -1,8 +1,7 @@
 package glue.Gachi_Sanchaek.walkRecommendation.controller;
 
-import glue.Gachi_Sanchaek.common.ApiResponse;
+import glue.Gachi_Sanchaek.util.ApiResponse;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.SaveWalkRouteResponse;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRecommendationGroupResponse;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.WalkRouteSelectionRequest;
@@ -28,8 +27,8 @@ public class WalkRecommendationController {
             @RequestParam int minutes,
             @RequestParam double currentLat,
             @RequestParam double currentLng){
-        return ResponseEntity.ok(ApiResponse.onSuccess(walkRecommendationService.recommendRoutes(
-                orgId, minutes,currentLat,currentLng)));
+        WalkRecommendationGroupResponse recommendedRoutes = walkRecommendationService.recommendRoutes(orgId, minutes,currentLat,currentLng);
+        return ok(recommendedRoutes);
     }
 
     @PostMapping("/select")
@@ -41,7 +40,7 @@ public class WalkRecommendationController {
         }
         Long userId = userDetails.getUserId();
         SaveWalkRouteResponse saved = walkRecommendationService.saveSelectedRoute(userId,req);
-        return ResponseEntity.ok(ApiResponse.onSuccess(saved));
+        return ok(saved);
     }
 
 
