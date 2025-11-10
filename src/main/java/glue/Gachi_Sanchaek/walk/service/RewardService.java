@@ -2,12 +2,12 @@ package glue.Gachi_Sanchaek.walk.service;
 
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.ranking.service.RankingService;
+import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
-import glue.Gachi_Sanchaek.walkLocation.service.WalkLocationService;
 import glue.Gachi_Sanchaek.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,31 +18,38 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RewardService {
     private final WalkRecordRepository walkRecordRepository;
-    private final WalkLocationService walkLocationService;
     private final WalkRecommendationRepository walkRecommendationRepository;
     private final UserService userService;
     private final PointLogService pointLogService;
     private final RankingService rankingService;
 
     //산책 종료 공통 로직
-    public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message){
+    public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message,
+                                        Double totalDistance, Integer totalMinutes){
 
-        double distanceKm = walkLocationService.getTotalDistance(walk.getId());
-        long totalMinutes = walkLocationService.getTotalMinutes(walk.getId());
-        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),distanceKm));
+        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),totalDistance));
 
         //인증 성공 시 - WalkRecord 업데이트
         walk.setStatus(WalkStatus.FINISHED);
         walk.setEndTime(LocalDateTime.now());
+        walk.setTotalDistance(totalDistance);
+        walk.setTotalTime(totalMinutes);
         walkRecordRepository.save(walk);
+
+        User user = userService.findById(userId);
+        userService.recordWalkingResult(userId,reward);
+        Long walkingCount = userService.findById(userId).getWalkingCount();
 
         processAfterWalk(userId,walk,reward);
 
         return WalkEndResponse.builder()
                 .walkId(walk.getId())
-                .totalDistance(distanceKm)
-                .totalMin(totalMinutes)
+                .status(WalkStatus.FINISHED)
+                .nickname(user.getNickname())
+                .totalDistance(totalDistance)
+                .totalMinutes(totalMinutes)
                 .pointsEarned(reward)
+                .walkingCount(walkingCount)
                 .message(message)
                 .build();
     }

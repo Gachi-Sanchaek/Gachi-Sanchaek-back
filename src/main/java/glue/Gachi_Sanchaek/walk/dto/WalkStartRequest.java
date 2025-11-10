@@ -9,5 +9,4 @@ import lombok.Builder;
 public class WalkStartRequest {
     private Long recommendationId;
     private String walkType;
-    private Integer desiredTime; //분 단위
 }
