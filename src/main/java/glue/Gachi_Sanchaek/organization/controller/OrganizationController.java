@@ -32,6 +32,7 @@ public class OrganizationController {
             @RequestParam OrganizationSearchService.SearchType type
             ){
         List<OrganizationDTO> result = organizationSearchService.searchNearby(lat,lng,radius,type);
+    
         return ApiResponse.ok(result);
     }
 

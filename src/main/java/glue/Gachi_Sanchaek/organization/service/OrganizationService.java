@@ -73,9 +73,9 @@ public class OrganizationService {
                 .category(org.getCategory())
                 .createdAt(org.getCreatedAt())
                 .build();
-
     }
 
+ 
     private OrganizationCategory mapKeywordToCategory(String keyword) {
         if (keyword.equalsIgnoreCase("SENIOR") || keyword.contains("복지") || keyword.contains("노인")) {
             return OrganizationCategory.WELFARE;
@@ -85,5 +85,7 @@ public class OrganizationService {
         }
         throw new IllegalArgumentException("알 수 없는 카테고리: " + keyword);
     }
-
 }
+
+
+

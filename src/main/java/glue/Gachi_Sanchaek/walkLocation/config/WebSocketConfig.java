@@ -1,4 +1,4 @@
-package glue.Gachi_Sanchaek.walk.config;
+package glue.Gachi_Sanchaek.walkLocation.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

@@ -6,7 +6,6 @@ import glue.Gachi_Sanchaek.walk.dto.WalkEndRequest;
 import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
-import glue.Gachi_Sanchaek.walk.service.GeminiWalkService;
 import glue.Gachi_Sanchaek.walk.service.WalkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class WalkController {
     private final WalkService walkService;
-    private final GeminiWalkService geminiWalkService;
 
     @PostMapping("/start")
     public ResponseEntity<ApiResponse<WalkResponse>> startWalk(
@@ -29,6 +27,14 @@ public class WalkController {
         Long userId = Long.parseLong(userDetails.getUsername());
         WalkResponse response = walkService.startWalk(request, userId);
         return ApiResponse.ok(response,"산책 시작");
+    }
+
+    @PostMapping("/connect")
+    public ResponseEntity<ApiResponse<String>> connectWalk(
+            @RequestParam Long walkId
+    ){
+        walkService.connectWalk(walkId);
+        return ApiResponse.ok("산책 세션 연결 성공");
     }
     @PatchMapping("/end")
     public ResponseEntity<ApiResponse<WalkEndResponse>> endWalk(
