@@ -74,9 +74,12 @@ public class OrganizationService {
     }
 
     private Organization.OrganizationCategory mapKeywordToCategory(String keyword) {
-        if (keyword.contains("복지")) return Organization.OrganizationCategory.WELFARE;
-        if (keyword.contains("보호")) return Organization.OrganizationCategory.SHELTER;
+        if (keyword.equalsIgnoreCase("SENIOR") || keyword.contains("복지") || keyword.contains("노인")) {
+            return Organization.OrganizationCategory.WELFARE;
+        }
+        if (keyword.equalsIgnoreCase("ANIMAL") || keyword.contains("보호") || keyword.contains("유기")) {
+            return Organization.OrganizationCategory.SHELTER;
+        }
         throw new IllegalArgumentException("알 수 없는 카테고리: " + keyword);
     }
-
 }
