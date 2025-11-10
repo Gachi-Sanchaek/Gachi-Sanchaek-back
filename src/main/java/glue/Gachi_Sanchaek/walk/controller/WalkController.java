@@ -28,6 +28,14 @@ public class WalkController {
         WalkResponse response = walkService.startWalk(request, userId);
         return ApiResponse.ok(response,"산책 시작");
     }
+
+    @PostMapping("/connect")
+    public ResponseEntity<ApiResponse<String>> connectWalk(
+            @RequestParam Long walkId
+    ){
+        walkService.connectWalk(walkId);
+        return ApiResponse.ok("산책 세션 연결 성공");
+    }
     @PatchMapping("/end")
     public ResponseEntity<ApiResponse<WalkEndResponse>> endWalk(
             @RequestBody WalkEndRequest request,

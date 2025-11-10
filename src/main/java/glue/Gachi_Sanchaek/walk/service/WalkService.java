@@ -38,4 +38,8 @@ public class WalkService {
     public WalkEndResponse verifyPlogging(Long userId, Long walkId, MultipartFile image){
         return verificationService.verifyPlogging(userId,walkId,image);
     }
+
+    public void connectWalk(Long walkId){
+        walkRecordService.onWebSocketConnect(walkId);
+    }
 }
