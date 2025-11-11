@@ -50,8 +50,7 @@ public class VerificationService {
     }
 
     //플로깅 AI인증
-    public VerificationResponse verifyPlogging(Long userId, Long walkId, MultipartFile image
-            , Double totalDistance, Integer totalMinutes) {
+    public VerificationResponse verifyPlogging(Long userId, Long walkId, MultipartFile image) {
         WalkRecord walk = walkRecordService.getWalkOrThrow(walkId);
 
         //산책 상태 검증
