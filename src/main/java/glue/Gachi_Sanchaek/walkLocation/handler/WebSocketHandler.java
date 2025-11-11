@@ -32,7 +32,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             if (session.getAttributes().get("walkId") == null) {
                 session.getAttributes().put("walkId", walkId);
-                walkRecordService.onWebSocketConnect(walkId);
+                walkRecordService.onConnected(walkId);
                 log.info("[WS] 세션 시작: session_id={}, walkId={}", session.getId(), walkId);
             }
 

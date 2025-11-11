@@ -10,6 +10,7 @@ import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -50,18 +51,33 @@ public class WalkRecordService {
         return walkRecordRepository.findById(walkId)
                 .orElseThrow(()-> new IllegalArgumentException("해당 산책 세션이 존재하지 않습니다"));
     }
-    //웹소켓 연결 시 status = ONGOING (QR인증 제외)
-    public void onWebSocketConnect(Long walkId) {
+    //status = ONGOING (QR인증 제외)
+    public WalkResponse onConnected(Long walkId) {
         WalkRecord walk = getWalkOrThrow(walkId);
         if(walk.getVerificationMethod()!= VerificationMethod.QR
                 && walk.getStatus() == WalkStatus.WAITING){
             walk.setStatus(WalkStatus.ONGOING);
             walkRecordRepository.save(walk);
         }
+        return WalkResponse.builder()
+                .walkId(walk.getId())
+                .status(walk.getStatus())
+                .walkType(walk.getWalkType())
+                .recommendationId(walk.getWalkRecommendationId())
+                .verificationMethod(walk.getVerificationMethod())
+                .startTime(walk.getStartTime())
+                .build();
     }
     public WalkRecord findLatestQrWalk(Long userId){
         return walkRecordRepository
                 .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
                 .orElseThrow(()-> new IllegalArgumentException("QR 인증 대상 산책이 존재하지 않습니다"));
+    }
+    @Transactional
+    public void updateStatusAndToken(Long walkId, WalkStatus status, String qrToken) {
+        WalkRecord walk = getWalkOrThrow(walkId);
+        walk.setStatus(status);
+        walk.setQrToken(qrToken);
+        walkRecordRepository.save(walk);
     }
 }

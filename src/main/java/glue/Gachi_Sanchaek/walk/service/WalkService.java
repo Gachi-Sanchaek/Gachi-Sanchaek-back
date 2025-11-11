@@ -22,27 +22,25 @@ public class WalkService {
     //일반 산책 시 산책 종료 메서드
     public WalkEndResponse endWalk(Long userId, WalkEndRequest request) {
         WalkRecord walk = walkRecordService.getWalkOrThrow(request.getWalkId());
-        return rewardService.finalizeWalk(userId,walk,"산책 종료 완료",
-                request.getTotalDistance(),request.getTotalMinutes());
+        return rewardService.finalizeWalk(userId, walk, "산책 종료 완료",
+                request.getTotalDistance(), request.getTotalMinutes());
     }
 
-
-    public Object handleQrScan(Long userId, QrVerificationRequest request) {
-        return verificationService.handleQrScan(userId,request);
+    public VerificationResponse verifyQr(Long userId, VerificationRequest request) {
+        return verificationService.verifyQr(userId, request);
     }
 
-    public WalkEndResponse verifyPlogging(
+    public VerificationResponse verifyPlogging(
             Long userId,
             Long walkId,
             MultipartFile image,
             Double totalDistance,
             Integer totalMinutes
-    )
-    {
-        return verificationService.verifyPlogging(userId,walkId,image,totalDistance,totalMinutes);
+    ) {
+        return verificationService.verifyPlogging(userId, walkId, image, totalDistance, totalMinutes);
     }
 
-    public void connectWalk(Long walkId){
-        walkRecordService.onWebSocketConnect(walkId);
+    public WalkResponse connectWalk(Long walkId) {
+        return walkRecordService.onConnected(walkId);
     }
 }
