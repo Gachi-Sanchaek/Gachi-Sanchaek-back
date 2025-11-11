@@ -44,25 +44,3 @@ public class WalkService {
         return walkRecordService.onConnected(walkId);
     }
 }
-    /*
-    public WalkEndResponse endWalk(Long userId, WalkEndRequest request) {
-        WalkRecord walk = walkRecordService.getWalkOrThrow(request.getWalkId());
-
-        // QR 또는 AI 중 하나라도 인증 성공 상태일 때만 종료 허용
-        if (walk.getVerificationMethod() == VerificationMethod.QR && walk.getQrToken() == null) {
-            throw new IllegalStateException("QR 인증이 완료되지 않았습니다.");
-        }
-
-        // (AI의 경우 gemini 검증은 바로 완료되므로 상태만 확인)
-        walk.setStatus(WalkStatus.FINISHED);
-        walkRecordService.updateStatusAndToken(walk.getId(), WalkStatus.FINISHED, walk.getQrToken());
-
-        return rewardService.finalizeWalk(
-                userId,
-                walk,
-                "산책 종료 완료",
-                request.getTotalDistance(),
-                request.getTotalMinutes()
-        );
-    }
-     */
