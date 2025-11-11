@@ -33,11 +33,9 @@ public class WalkService {
     public VerificationResponse verifyPlogging(
             Long userId,
             Long walkId,
-            MultipartFile image,
-            Double totalDistance,
-            Integer totalMinutes
+            MultipartFile image
     ) {
-        return verificationService.verifyPlogging(userId, walkId, image, totalDistance, totalMinutes);
+        return verificationService.verifyPlogging(userId, walkId, image);
     }
 
     public WalkResponse connectWalk(Long walkId) {

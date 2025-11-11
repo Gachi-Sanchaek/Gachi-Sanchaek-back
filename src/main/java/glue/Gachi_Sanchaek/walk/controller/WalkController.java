@@ -33,6 +33,7 @@ public class WalkController {
         WalkResponse response = walkService.connectWalk(walkId);
         return ApiResponse.ok(response,"산책 세션 연결 성공");
     }
+
     @PatchMapping("/end")
     public ResponseEntity<ApiResponse<WalkEndResponse>> endWalk(
             @RequestBody WalkEndRequest request,
@@ -46,13 +47,10 @@ public class WalkController {
     public ResponseEntity<ApiResponse<VerificationResponse>> pLogging(
             @RequestParam("image") MultipartFile image,
             @RequestParam("walkId") Long walkId,
-            @RequestParam("totalDistance") Double totalDistance,
-            @RequestParam("totalMinutes") Integer totalMinutes,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        VerificationResponse response = walkService.verifyPlogging(
-                userId, walkId, image,totalDistance,totalMinutes);
+        VerificationResponse response = walkService.verifyPlogging(userId, walkId, image);
         return ApiResponse.ok(response,response.getMessage());
     }
 
