@@ -27,11 +27,11 @@ public class WalkController {
     }
 
     @PostMapping("/connect")
-    public ResponseEntity<ApiResponse<String>> connectWalk(
+    public ResponseEntity<ApiResponse<WalkResponse>> connectWalk(
             @RequestParam Long walkId
     ){
-        walkService.connectWalk(walkId);
-        return ApiResponse.ok("산책 세션 연결 성공");
+        WalkResponse response = walkService.connectWalk(walkId);
+        return ApiResponse.ok(response,"산책 세션 연결 성공");
     }
     @PatchMapping("/end")
     public ResponseEntity<ApiResponse<WalkEndResponse>> endWalk(
@@ -43,7 +43,7 @@ public class WalkController {
     }
 
     @PostMapping("/plogging")
-    public ResponseEntity<ApiResponse<WalkEndResponse>> pLogging(
+    public ResponseEntity<ApiResponse<VerificationResponse>> pLogging(
             @RequestParam("image") MultipartFile image,
             @RequestParam("walkId") Long walkId,
             @RequestParam("totalDistance") Double totalDistance,
@@ -51,19 +51,19 @@ public class WalkController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        WalkEndResponse response = walkService.verifyPlogging(
+        VerificationResponse response = walkService.verifyPlogging(
                 userId, walkId, image,totalDistance,totalMinutes);
         return ApiResponse.ok(response,response.getMessage());
     }
 
     @PostMapping("/qr")
-    public ResponseEntity<ApiResponse<Object>> verifyQr(
-            @RequestBody QrVerificationRequest request,
+    public ResponseEntity<ApiResponse<VerificationResponse>> verifyQr(
+            @RequestBody VerificationRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long userId = Long.parseLong(userDetails.getUsername());
-        Object response = walkService.handleQrScan(userId,request);
-        return ApiResponse.ok(response,"QR 인증 처리 완료");
+        VerificationResponse response = walkService.verifyQr(userId,request);
+        return ApiResponse.ok(response,response.getMessage());
     }
 
 }

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 
-public class QrVerificationRequest {
+public class VerificationRequest {
     private Long walkId;
     private String qrToken;
-    private Double totalDistance;
-    private Integer totalMinutes;
 }
