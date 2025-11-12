@@ -1,14 +1,16 @@
 package glue.Gachi_Sanchaek.walk.service;
 
-import glue.Gachi_Sanchaek.walk.dto.WalkEndResponse;
-import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
+import glue.Gachi_Sanchaek.walk.dto.VerificationResponse;
+import glue.Gachi_Sanchaek.walk.dto.VerificationRequest;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
-import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -17,56 +19,55 @@ public class VerificationService {
     private final RewardService rewardService;
     private final WalkRecordService walkRecordService;
 
-    //QR인식
-    public Object handleQrScan(Long userId, String qrToken){
-        WalkRecord walk = walkRecordService.findLatestQrWalk(userId);
+    // QR 스캔 횟수를 walkId 기준으로 임시 저장
+    private final Map<Long, Integer> qrScanCountMap = new ConcurrentHashMap<>();
 
-        //처음 스캔할 때
-        if(walk.getStatus()== WalkStatus.WAITING){
-            walk.setQrToken(qrToken);
+    public VerificationResponse verifyQr(Long userId, VerificationRequest request) {
+        WalkRecord walk = walkRecordService.getWalkOrThrow(request.getWalkId());
+
+        if (walk.getVerificationMethod() != VerificationMethod.QR)
+            throw new IllegalArgumentException("QR 인증 대상이 아닙니다.");
+
+        // 1. QR 스캔 횟수 계산
+        int newCount = qrScanCountMap.getOrDefault(walk.getId(), 0) + 1;
+        qrScanCountMap.put(walk.getId(), newCount);
+
+        // 2. 홀짝 판별
+        if (newCount % 2 == 1) {
+            // 홀수 → 첫 스캔
+            walk.setQrToken(request.getQrToken());
             walk.setStatus(WalkStatus.ONGOING);
-
-            return WalkResponse.builder()
-                    .walkId(walk.getId())
-                    .status(WalkStatus.ONGOING)
-                    .walkType(walk.getWalkType())
-                    .verificationMethod(walk.getVerificationMethod())
-                    .startTime(walk.getStartTime())
-                    .build();
-        }
-        else if(walk.getStatus()==WalkStatus.ONGOING
-                && qrToken.equals(walk.getQrToken())){
-            return rewardService.finalizeWalk(userId,walk,"QR 인증 성공, 산책 종료 완료");
-        }
-        else{
-            throw new IllegalArgumentException("잘못된 QR 인증 시도입니다");
+            walkRecordService.updateStatusAndToken(walk.getId(), WalkStatus.ONGOING, request.getQrToken());
+            return new VerificationResponse(walk.getId(), true, "QR 첫 스캔 완료 (1회차)");
+        } else {
+            // 짝수 → 두 번째 스캔
+            if (request.getQrToken().equals(walk.getQrToken())) {
+                return new VerificationResponse(walk.getId(), true, "QR 인증 성공 (2회차)");
+            } else {
+                return new VerificationResponse(walk.getId(), false, "QR 토큰 불일치 (2회차)");
+            }
         }
     }
 
     //플로깅 AI인증
-    public WalkEndResponse verifyPlogging(Long userId, Long walkId, MultipartFile image ){
+    public VerificationResponse verifyPlogging(Long userId, Long walkId, MultipartFile image) {
         WalkRecord walk = walkRecordService.getWalkOrThrow(walkId);
 
         //산책 상태 검증
-        if(walk.getVerificationMethod()!=VerificationMethod.AI){
+        if (walk.getVerificationMethod() != VerificationMethod.AI) {
             throw new IllegalArgumentException("플로깅 인증 대상 산책이 아닙니다.");
         }
-        if(walk.getStatus()!=WalkStatus.ONGOING){
+        if (walk.getStatus() != WalkStatus.ONGOING) {
             throw new IllegalArgumentException("진행 중인 산책만 플로깅 인증이 가능합니다.");
         }
         //이미지 AI 분석
         int trashCount = geminiWalkService.countTrashImage(image);
 
-        //인증 실패 시
-        if(trashCount<10){
-            return WalkEndResponse.builder()
-                    .walkId(walkId)
-                    .pointsEarned(0L)
-                    .message("플로깅 인증 실패 - 쓰레기 개수 부족 ("+trashCount+"개)")
-                    .build();
-        }
+        if (trashCount < 10)
+            return new VerificationResponse(walk.getId(),
+                    false, "플로깅 인증 실패 (" + trashCount + "개 감지됨)");
 
-        //인증 성공 시
-        return rewardService.finalizeWalk(userId, walk, "플로깅 인증 성공 ("+trashCount+"개 감지됨), 산책 종료 완료");
+        return new VerificationResponse(walk.getId(),
+                true, "플로깅 인증 성공 (" + trashCount + "개 감지됨)");
     }
 }

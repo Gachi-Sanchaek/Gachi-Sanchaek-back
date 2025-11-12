@@ -55,12 +55,14 @@ public class OrganizationController {
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<OrganizationResponse>> selectOrganization(
             @AuthenticationPrincipal @Parameter(hidden = true)CustomUserDetails userDetails,
+      
             @Parameter(description = "검색에 사용된 타입 (type)")
-            @RequestParam String keyword,
+            @RequestParam OrganizationSearchService.SearchType type,
+      
             @Parameter(description = "저장할 기관 정보")
             @RequestBody OrganizationDTO selectedOrg){
 
-        OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), keyword,selectedOrg);
+        OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), type,selectedOrg);
 
         return ApiResponse.ok(saved);
     }
