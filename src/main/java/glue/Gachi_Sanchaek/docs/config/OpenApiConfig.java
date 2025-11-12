@@ -3,6 +3,7 @@ package glue.Gachi_Sanchaek.docs.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
@@ -18,6 +19,9 @@ public class OpenApiConfig {
      */
     @Bean
     public OpenAPI openAPI() {
+        String jwtSchemeName = "jwtAuth";
+        SecurityRequirement securityRequirement =  new SecurityRequirement().addList(jwtSchemeName);
+
         return new OpenAPI()
                 .info(new Info()
                         .title("Gachi Sanchaek API 목록")
@@ -31,6 +35,7 @@ public class OpenApiConfig {
                                 .url("http://13.124.32.133:8080")
                                 .description("운영 서버")
                 ))
+                .addSecurityItem(securityRequirement)
                 .components(new Components()
                         .addSecuritySchemes("JWT", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
