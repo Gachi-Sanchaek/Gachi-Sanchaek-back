@@ -14,4 +14,9 @@ public class UserJoinDto {
         this.kakaoId = kakaoUserInfoResponseDto.getId();
         this.username = kakaoUserInfoResponseDto.getProperties().get("nickname");
     }
+
+    public UserJoinDto(Long kakaoId, String username) {
+        this.kakaoId = kakaoId;
+        this.username = username;
+    }
 }
