@@ -39,10 +39,10 @@ public class OrganizationController {
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<OrganizationResponse>> selectOrganization(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String keyword,
+            @RequestParam OrganizationSearchService.SearchType type,
             @RequestBody OrganizationDTO selectedOrg){
 
-        OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), keyword,selectedOrg);
+        OrganizationResponse saved = organizationService.saveSelectedOrganization(userDetails.getUserId(), type,selectedOrg);
 
         return ApiResponse.ok(saved);
     }
