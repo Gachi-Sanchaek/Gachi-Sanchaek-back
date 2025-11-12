@@ -2,6 +2,9 @@ package glue.Gachi_Sanchaek.qrExport.controller;
 
 import glue.Gachi_Sanchaek.qrExport.service.QrExportService;
 import glue.Gachi_Sanchaek.util.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "관리자 (Admin) - CSV 내보내기", description = "기관별 QR 코드 데이터 CSV 파일 추출 API (관리자 TEST전용)")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +24,10 @@ public class QrExportController {
 
     private final QrExportService qrExportService;
 
+    @Operation(summary = "단일 기관 QR 데이터 CSV 추출", description = "특정 기관의 payload 데이터를 CSV 파일 형식으로 내보냅니다.")
     @GetMapping(value = "/export-organization-csv")
     public ResponseEntity<?> exportOrganizationCsv(
+            @Parameter(description = "CSV 추출을 원하는 기관의 고유 ID")
             @RequestParam(value = "orgId") Long organizationId
     ){
         log.info("CSV 추출 요청 시작. 요청된 단일 기관 ID: {}", organizationId);

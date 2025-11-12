@@ -23,7 +23,7 @@ public class OrganizationSearchService {
     public List<OrganizationDTO> searchNearby(double lat, double lng, int radius, SearchType type){
         List<String> keywords = switch (type){
             case SENIOR -> List.of("노인복지관","노인종합복지관","노인센터","종합사회복지관","노인문화센터");
-            case ANIMAL -> List.of("동물보호소", "유기동물 보호소", "유기견 보호소", "동물보호센터", "입양센터");
+            case ANIMAL -> List.of("동물보호", "동물보호센터", "유기견 보호소", "보호센터", "입양센터");
         };
 
 
@@ -70,7 +70,7 @@ public class OrganizationSearchService {
         if (name == null) return false;
 
         boolean include = containsAny(name, "보호소", "보호센터", "입양센터", "유기동물", "유기견");
-        boolean exclude = containsAny(name, "동물병원", "펫샵", "카페", "호텔", "훈련소");
+        boolean exclude = containsAny(name, "동물병원", "펫샵", "카페", "호텔", "훈련소","노인");
 
         return include && !exclude;
     }
