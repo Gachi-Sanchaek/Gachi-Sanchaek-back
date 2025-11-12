@@ -59,8 +59,8 @@ public class OrganizationSearchService {
         String name = dto.getName();
         if(name == null || name.isEmpty()) return false;
 
-        boolean include = containsAny(name, "복지관", "노인복지", "노인종합복지관","센터");
-        boolean exclude = containsAny(name, "요양병원", "요양원", "의원", "병원", "치과","화장실");
+        boolean include = containsAny(name, "복지관", "노인복지", "노인종합복지관");
+        boolean exclude = containsAny(name, "요양병원", "요양원", "의원", "병원", "치과","화장실","ATM");
 
         return include && !exclude;
     }

@@ -25,9 +25,9 @@ public class OrganizationService {
 
     @Transactional
     public OrganizationResponse saveSelectedOrganization(
-            Long userId, String keyword, OrganizationDTO selectedOrg) {
+            Long userId, OrganizationSearchService.SearchType type, OrganizationDTO selectedOrg) {
 
-        OrganizationCategory category = mapKeywordToCategory(keyword);
+        OrganizationCategory category = mapKeywordToCategory(type.name());
 
         // 객체 저장
         Organization org = organizationRepository.findByKakaoPlaceId(selectedOrg.getKakaoId())
@@ -77,10 +77,10 @@ public class OrganizationService {
 
  
     private OrganizationCategory mapKeywordToCategory(String keyword) {
-        if (keyword.equalsIgnoreCase("SENIOR") || keyword.contains("복지") || keyword.contains("노인")) {
+        if (keyword.equalsIgnoreCase("SENIOR")){
             return OrganizationCategory.WELFARE;
         }
-        if (keyword.equalsIgnoreCase("ANIMAL") || keyword.contains("보호") || keyword.contains("유기")) {
+        if (keyword.equalsIgnoreCase("ANIMAL")) {
             return OrganizationCategory.SHELTER;
         }
         throw new IllegalArgumentException("알 수 없는 카테고리: " + keyword);
