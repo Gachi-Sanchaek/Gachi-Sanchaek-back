@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
-    // 2. 중복되는 랭킹 로직을 CTE로 분리
     String CTE_RANKING = """
         WITH RankedUsers AS (
             SELECT 
@@ -20,6 +19,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
                 u.nickname,
                 u.profile_image_url AS profileImageUrl,
                 r.point,
+                r.updated_at AS updatedAt,
                 RANK() OVER (ORDER BY r.point DESC) AS ranking
             FROM rankings r
             JOIN users u ON u.id = r.user_id
@@ -31,7 +31,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
     @Query(value = CTE_RANKING + """
         SELECT nickname, profileImageUrl, point, ranking
         FROM RankedUsers
-        ORDER BY ranking ASC
+        ORDER BY ranking ASC, updatedAt asc
         LIMIT 10
         """, nativeQuery = true)
     List<RankingResponseDto> findTop10ByPeriod(@Param("period") int period);

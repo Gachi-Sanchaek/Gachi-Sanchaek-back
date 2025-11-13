@@ -31,18 +31,12 @@ public class RankingService {
     @Transactional
     public void updateRanking(Long userId, Long reward){
         int period = DateUtil.getTodayYYYYMMW();
-        User user = userService.findById(userId);
-        Optional<Ranking> rankingOpt = rankingRepository.findByRankPeriodAndUserId(period, userId);
-
-        Ranking ranking;
-
-        if (rankingOpt.isPresent()) {
-            ranking = rankingOpt.get();
-            ranking.setPoint(ranking.getPoint() + reward);
-        } else {
-            ranking = new Ranking(user, reward, period);
-        }
-
+        Ranking ranking = rankingRepository.findByRankPeriodAndUserId(period, userId)
+                .orElseGet(()->{
+                    User user = userService.findById(userId);
+                    return new Ranking(user, 0L, period);
+                });
+        ranking.addPoint(reward);
         rankingRepository.save(ranking);
     }
 }
