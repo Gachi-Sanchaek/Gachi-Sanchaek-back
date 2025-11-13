@@ -9,6 +9,7 @@ import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.util.DateUtil;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,21 +25,18 @@ public class RankingService {
     }
 
     public RankingResponseDto findByPeriodAndId(int period, Long userId){
-        return rankingRepository.findByPeriodAndUserId(period, userId);
+        return rankingRepository.findDtoByPeriodAndUserId(period, userId);
     }
 
     @Transactional
     public void updateRanking(Long userId, Long reward){
         int period = DateUtil.getTodayYYYYMMW();
-        User user = userService.findById(userId);
-        Ranking ranking = rankingRepository.findByPeriodAndUserIdEntity(period, userId);
-
-        if (ranking != null) {
-            ranking.setPoint(ranking.getPoint() + reward);
-        } else {
-            ranking = new Ranking(user, reward, period);
-        }
-
+        Ranking ranking = rankingRepository.findByRankPeriodAndUserId(period, userId)
+                .orElseGet(()->{
+                    User user = userService.findById(userId);
+                    return new Ranking(user, 0L, period);
+                });
+        ranking.addPoint(reward);
         rankingRepository.save(ranking);
     }
 }
