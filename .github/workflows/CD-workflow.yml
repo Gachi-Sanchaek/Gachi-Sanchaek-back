@@ -90,5 +90,5 @@ jobs:
             cd app
             export APP_VERSION=${{ needs.build-and-push-docker-image.outputs.image_tag }}
             sudo docker-compose stop
-            sudo APP_VERSION=$APP_VERSION docker-compose pull
-            sudo APP_VERSION=$APP_VERSION docker-compose up -d
+            sudo APP_VERSION=$APP_VERSION docker-compose --env-file ./.env pull
+            sudo APP_VERSION=$APP_VERSION docker-compose --env-file ./.env up -d
