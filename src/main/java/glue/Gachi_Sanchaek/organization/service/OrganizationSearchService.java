@@ -23,7 +23,7 @@ public class OrganizationSearchService {
     public List<OrganizationDTO> searchNearby(double lat, double lng, int radius, SearchType type){
         List<String> keywords = switch (type){
             case SENIOR -> List.of("노인복지관","노인종합복지관","노인센터","종합사회복지관","노인문화센터");
-            case ANIMAL -> List.of("동물보호", "동물보호센터", "유기견 보호소", "보호센터", "입양센터");
+            case ANIMAL -> List.of("동물보호", "동물보호센터", "보호소", "보호센터", "입양센터");
         };
 
 
@@ -59,7 +59,7 @@ public class OrganizationSearchService {
         String name = dto.getName();
         if(name == null || name.isEmpty()) return false;
 
-        boolean include = containsAny(name, "복지관", "노인복지", "노인종합복지관");
+        boolean include = containsAny(name, "복지관", "노인복지", "노인종합복지관","주간");
         boolean exclude = containsAny(name, "요양병원", "요양원", "의원", "병원", "치과","화장실","ATM");
 
         return include && !exclude;
@@ -69,8 +69,8 @@ public class OrganizationSearchService {
         String name = dto.getName();
         if (name == null) return false;
 
-        boolean include = containsAny(name, "보호소", "보호센터", "입양센터", "유기동물", "유기견");
-        boolean exclude = containsAny(name, "동물병원", "펫샵", "카페", "호텔", "훈련소","노인");
+        boolean include = containsAny(name, "보호소", "보호센터", "입양센터", "유기동물", "유기견","동물");
+        boolean exclude = containsAny(name, "동물병원", "펫샵", "카페", "호텔", "훈련소","노인","주간","야간");
 
         return include && !exclude;
     }
