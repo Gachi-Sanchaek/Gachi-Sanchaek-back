@@ -59,7 +59,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/gachi-sanchaek-img
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/gachi-sanchaek-img
           tags: |
             type=sha,prefix=,format=short
 
