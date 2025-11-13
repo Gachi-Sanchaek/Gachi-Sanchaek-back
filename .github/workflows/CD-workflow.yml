@@ -87,7 +87,7 @@ jobs:
           script_stop: true
           script: |
             cd app
-            git pull origin main
             export APP_VERSION=${{ needs.build-and-push-docker-image.outputs.image_tag }}
-            sudo docker-compose -f docker-compose.prod.yml pull
-            sudo docker-compose -f docker-compose.prod.yml up -d
+            sudo docker-compose stop
+            sudo docker-compose pull
+            sudo docker-compose up -d
