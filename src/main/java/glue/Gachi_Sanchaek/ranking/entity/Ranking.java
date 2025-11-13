@@ -52,6 +52,6 @@ public class Ranking {
     }
 
     public void addPoint(Long reward){
-        this.point = reward;
+        this.point += reward;
     }
 }
