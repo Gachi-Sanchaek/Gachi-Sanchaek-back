@@ -66,4 +66,8 @@ public class WalkRecord {
     @Enumerated(EnumType.STRING)
     @Column(name="qr_stage")
     private QrStage qrStage = QrStage.UNVERIFIED;
+
+    @Column(name = "plogging_verified")
+    private Boolean ploggingVerified = false;
+
 }

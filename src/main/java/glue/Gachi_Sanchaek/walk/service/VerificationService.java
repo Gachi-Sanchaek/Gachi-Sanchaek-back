@@ -78,14 +78,25 @@ public class VerificationService {
             throw new IllegalArgumentException("진행 중인 산책만 플로깅 인증이 가능합니다.");
         }
 
+        //이미 인증 성공한 경우
+        if(Boolean.TRUE.equals(walk.getPloggingVerified())){
+            return new VerificationResponse(
+                    walk.getId(),false,"이미 플로깅 인증이 완료되었습니다"
+            );
+        }
         //이미지 AI 분석
         int trashCount = geminiWalkService.countTrashImage(image);
 
-        if (trashCount < 10)
+        //실패한경우
+        if (trashCount < 10) {
             return new VerificationResponse(walk.getId(),
-                    false, "플로깅 인증 실패 (" + trashCount + "개 감지됨)");
+                    false, "플로깅 인증하기에 쓰레기가 부족합니다. (" + trashCount + "개 감지)");
+        }
+
+        //성공한 경우 - DB에 저장
+        walk.setPloggingVerified(true);
 
         return new VerificationResponse(walk.getId(),
-                true, "플로깅 인증 성공 (" + trashCount + "개 감지됨)");
+                true, "플로깅 인증에 성공했습니다 (" + trashCount + "개 감지)");
     }
 }
