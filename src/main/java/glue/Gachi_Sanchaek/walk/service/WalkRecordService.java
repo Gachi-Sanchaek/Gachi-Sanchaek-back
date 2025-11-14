@@ -5,6 +5,7 @@ import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
+import glue.Gachi_Sanchaek.walk.enums.QrStage;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
@@ -67,17 +68,5 @@ public class WalkRecordService {
                 .verificationMethod(walk.getVerificationMethod())
                 .startTime(walk.getStartTime())
                 .build();
-    }
-    public WalkRecord findLatestQrWalk(Long userId){
-        return walkRecordRepository
-                .findTopByUser_IdAndVerificationMethodOrderByStartTimeDesc(userId,VerificationMethod.QR)
-                .orElseThrow(()-> new IllegalArgumentException("QR 인증 대상 산책이 존재하지 않습니다"));
-    }
-    @Transactional
-    public void updateStatusAndToken(Long walkId, WalkStatus status, String qrToken) {
-        WalkRecord walk = getWalkOrThrow(walkId);
-        walk.setStatus(status);
-        walk.setQrToken(qrToken);
-        walkRecordRepository.save(walk);
     }
 }
