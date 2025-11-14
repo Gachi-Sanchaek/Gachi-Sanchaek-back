@@ -12,7 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "산책 진행", description = "산책을 진행, 인증 수행 API")
+@Tag(name = "산책 진행", description = "산책 진행과 산책 인증 수행 API")
 @RestController
 @RequestMapping("api/v1/walk")
 @RequiredArgsConstructor
@@ -62,7 +62,7 @@ public class WalkController {
 
     @SecureOperation(
             summary = "플로깅 인증",
-            description = "플로깅 활동을 인증하기 위해 사진을 촬영하면 AI가 사진을 분석합니다"
+            description = "플로깅 활동을 인증하기 위해 쓰레기 사진을 촬영하면 AI가 사진을 분석합니다"
     )
     @PostMapping("/plogging")
     public ResponseEntity<ApiResponse<VerificationResponse>> pLogging(
@@ -77,7 +77,7 @@ public class WalkController {
 
     @SecureOperation(
             summary = "QR 코드 인증",
-            description = "기관 산책 시작과 종료를 인증하기 위해 QR코드를 스캔합니다"
+            description = "기관 산책 시작과 종료를 인증하기 위해 QR 코드를 스캔합니다"
     )
     @PostMapping("/qr")
     public ResponseEntity<ApiResponse<VerificationResponse>> verifyQr(
