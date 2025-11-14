@@ -12,10 +12,12 @@ import org.springframework.stereotype.Component;
 public class InitializationRunner implements ApplicationRunner {
 
     private final StampInitializer stampInitializer;
+    private final AdminInitializer adminInitializer;
 
     @Override
     public void run(ApplicationArguments args) {
         stampInitializer.init();
+        adminInitializer.init();
         log.info("Initialization complete.");
     }
 }
