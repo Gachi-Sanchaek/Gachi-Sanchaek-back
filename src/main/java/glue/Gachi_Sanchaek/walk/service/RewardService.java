@@ -37,7 +37,6 @@ public class RewardService {
         walkRecordRepository.save(walk);
 
         User user = userService.findById(userId);
-        userService.recordWalkingResult(userId,reward);
         Long walkingCount = userService.findById(userId).getWalkingCount();
 
         processAfterWalk(userId,walk,reward);
