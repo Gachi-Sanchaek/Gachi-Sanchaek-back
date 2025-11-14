@@ -1,6 +1,7 @@
 package glue.Gachi_Sanchaek.walk.entity;
 
 import glue.Gachi_Sanchaek.user.entity.User;
+import glue.Gachi_Sanchaek.walk.enums.QrStage;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import jakarta.persistence.*;
@@ -60,4 +61,9 @@ public class WalkRecord {
 
     @Column(name= "qr_token")
     private String qrToken;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name="qr_stage")
+    private QrStage qrStage = QrStage.UNVERIFIED;
 }
