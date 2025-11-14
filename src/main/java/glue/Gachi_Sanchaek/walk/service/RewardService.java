@@ -27,7 +27,7 @@ public class RewardService {
     public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message,
                                         Double totalDistance, Integer totalMinutes){
 
-        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),totalDistance));
+        Long reward = Long.valueOf(calculateReward(walk,totalDistance));
 
         //인증 성공 시 - WalkRecord 업데이트
         walk.setStatus(WalkStatus.FINISHED);
@@ -81,15 +81,22 @@ public class RewardService {
     }
 
     // 리워드 계산
-    private int calculateReward(String walkType, double distanceKm){
+    private int calculateReward(WalkRecord walk, double distanceKm){
         //거리 기반 기본 포인트 : 1km당 100점 (반올림)
         int basePoints = (int)Math.round(distanceKm*100);
 
         //산책 타입에 따른 추가 포인트
-        int bonusPoints = switch(walkType.toUpperCase()){
+        int bonusPoints = switch(walk.getWalkType().toUpperCase()){
             case "SENIOR" -> 400;
             case "DOG" -> 300;
-            case "PLOGGING" -> 200;
+            case "PLOGGING" -> {
+                if(Boolean.TRUE.equals(walk.getPloggingVerified())){
+                    yield 200;
+                }
+                else{
+                    yield 0;
+                }
+            }
             default -> 0;
         };
         return basePoints + bonusPoints;
