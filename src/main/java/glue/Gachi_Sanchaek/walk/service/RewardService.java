@@ -1,5 +1,8 @@
 package glue.Gachi_Sanchaek.walk.service;
 
+import glue.Gachi_Sanchaek.organization.entity.Organization;
+import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
+import glue.Gachi_Sanchaek.organization.service.OrganizationService;
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.ranking.service.RankingService;
 import glue.Gachi_Sanchaek.user.entity.User;
@@ -18,7 +21,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RewardService {
     private final WalkRecordRepository walkRecordRepository;
-    private final WalkRecommendationRepository walkRecommendationRepository;
+    private final OrganizationService organizationService;
     private final UserService userService;
     private final PointLogService pointLogService;
     private final RankingService rankingService;
@@ -58,20 +61,12 @@ public class RewardService {
     private void processAfterWalk(Long userId, WalkRecord walk, long reward){
         //산책 타입
         String type = walk.getWalkType();
+        String upperWalkType = type.toUpperCase();
 
         //복지관,보호소 이름 가져오기
-        String locationName = "NORMAL";
-        if(walk.getWalkRecommendationId() != null){
-            locationName = walkRecommendationRepository.findById(walk.getWalkRecommendationId())
-                    .map(rec -> {
-                        if(rec.getOrganization()!=null){
-                            return rec.getOrganization().getName();
-                        }
-                        else{
-                            return "NORMAL";
-                        }
-                    })
-                    .orElse("NORMAL");
+        String locationName = "";
+        if(upperWalkType.equals("SENIOR") || upperWalkType.equals("DOG")){
+            locationName = organizationService.getLocationName(userId);
         }
 
         //후처리 호출 : 포인트 및 순위 갱신

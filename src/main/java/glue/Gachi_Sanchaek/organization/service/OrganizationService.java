@@ -75,6 +75,12 @@ public class OrganizationService {
                 .build();
     }
 
+    public String getLocationName(Long userId) {
+        return userOrganizationRepository.findFirstByUser_Id(userId)
+                .map(UserOrganization::getOrganization)
+                .map(Organization::getName)
+                .orElse("");
+    }
  
     private OrganizationCategory mapKeywordToCategory(String keyword) {
         if (keyword.equalsIgnoreCase("SENIOR")){
