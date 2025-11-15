@@ -21,9 +21,9 @@ public class WalkRecordService {
     public WalkResponse startWalk(WalkStartRequest request, Long userId) {
         User currentUser = userService.findById(userId);
 
-        VerificationMethod verificationMethod = switch(request.getWalkType().toUpperCase()){
-            case "PLOGGING" -> VerificationMethod.AI;
-            case "NORMAL" -> VerificationMethod.NONE;
+        VerificationMethod verificationMethod = switch(request.getWalkType()){
+            case PLOGGING -> VerificationMethod.AI;
+            case NORMAL -> VerificationMethod.NONE;
             default -> VerificationMethod.QR;
         };
         WalkRecord walkRecord = WalkRecord.builder()

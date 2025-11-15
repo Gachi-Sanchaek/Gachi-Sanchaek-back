@@ -3,6 +3,7 @@ package glue.Gachi_Sanchaek.walk.service;
 import glue.Gachi_Sanchaek.organization.entity.Organization;
 import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
 import glue.Gachi_Sanchaek.organization.service.OrganizationService;
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.ranking.service.RankingService;
 import glue.Gachi_Sanchaek.user.entity.User;
@@ -60,12 +61,11 @@ public class RewardService {
     //리워드 랭킹 후처리 메서드
     private void processAfterWalk(Long userId, WalkRecord walk, long reward){
         //산책 타입
-        String type = walk.getWalkType();
-        String upperWalkType = type.toUpperCase();
+        WalkType type = walk.getWalkType();
 
         //복지관,보호소 이름 가져오기
         String locationName = "";
-        if(upperWalkType.equals("SENIOR") || upperWalkType.equals("DOG")){
+        if(type==WalkType.SENIOR || type==WalkType.DOG){
             locationName = organizationService.getLocationName(userId);
         }
 
@@ -81,10 +81,10 @@ public class RewardService {
         int basePoints = (int)Math.round(distanceKm*100);
 
         //산책 타입에 따른 추가 포인트
-        int bonusPoints = switch(walk.getWalkType().toUpperCase()){
-            case "SENIOR" -> 400;
-            case "DOG" -> 300;
-            case "PLOGGING" -> {
+        int bonusPoints = switch(walk.getWalkType()){
+            case SENIOR -> 400;
+            case DOG -> 300;
+            case PLOGGING -> {
                 if(Boolean.TRUE.equals(walk.getPloggingVerified())){
                     yield 200;
                 }

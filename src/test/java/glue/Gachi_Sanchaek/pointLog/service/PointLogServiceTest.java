@@ -2,6 +2,7 @@ package glue.Gachi_Sanchaek.pointLog.service;
 
 import glue.Gachi_Sanchaek.pointLog.dto.PointLogResponseDto;
 import glue.Gachi_Sanchaek.pointLog.entity.PointLog;
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.pointLog.repository.PointLogRepository;
 import glue.Gachi_Sanchaek.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
@@ -38,8 +39,8 @@ class PointLogServiceTest {
         return user;
     }
 
-    private PointLog createTestPointLog(Long logId, User user, Long amount, String title) {
-        PointLog log = new PointLog(user, amount, title, "부천 유기견 센터");
+    private PointLog createTestPointLog(Long logId, User user, Long amount, WalkType type) {
+        PointLog log = new PointLog(user, amount, type, "부천 유기견 센터");
         ReflectionTestUtils.setField(log, "id", logId);
         ReflectionTestUtils.setField(log, "createdAt", LocalDateTime.now());
         return log;
@@ -51,7 +52,7 @@ class PointLogServiceTest {
         // given
         User user = createTestUser(1L);
         Long reward = 100L;
-        String type = "스탬프 적립";
+        WalkType type = WalkType.DOG;
         String location = "서울숲";
 
         PointLog savedLog = new PointLog(user, reward, type, location);
@@ -75,7 +76,7 @@ class PointLogServiceTest {
         assertThat(capturedLog.getId()).isNull();
         assertEquals(user, capturedLog.getUser());
         assertEquals(reward, capturedLog.getAmount());
-        assertEquals(type, capturedLog.getTitle());
+        assertEquals(type, capturedLog.getType());
     }
 
     @Test
@@ -85,8 +86,8 @@ class PointLogServiceTest {
         Long userId = 1L;
         User user = createTestUser(userId);
 
-        PointLog log1 = createTestPointLog(1L, user, 100L, "유기견 산책 봉사");
-        PointLog log2 = createTestPointLog(2L, user, 500L, "유기견 산책 봉사");
+        PointLog log1 = createTestPointLog(1L, user, 100L, WalkType.DOG);
+        PointLog log2 = createTestPointLog(2L, user, 500L, WalkType.DOG);
 
         List<PointLogResponseDto> expectedDtoList = List.of(
                 new PointLogResponseDto(log1),
@@ -101,7 +102,7 @@ class PointLogServiceTest {
         // then
         assertNotNull(resultList);
         assertEquals(2, resultList.size());
-        assertEquals(expectedDtoList.get(0).getTitle(), resultList.get(0).getTitle());
+        assertEquals(expectedDtoList.get(0).getType(), resultList.get(0).getType());
         assertEquals(expectedDtoList.get(1).getAmount(), resultList.get(1).getAmount());
 
         verify(pointLogRepository, times(1)).findAllByUserId(userId);

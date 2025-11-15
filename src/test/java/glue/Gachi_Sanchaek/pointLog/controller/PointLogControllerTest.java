@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import glue.Gachi_Sanchaek.pointLog.dto.PointLogResponseDto;
 import glue.Gachi_Sanchaek.pointLog.entity.PointLog;
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.user.entity.User;
@@ -69,7 +70,7 @@ class PointLogControllerTest {
                 .id(1L)
                 .user(testUser)
                 .amount(100L)
-                .title("테스트 스탬프 적립")
+                .type(WalkType.DOG)
                 .location("테스트 위치")
                 .build();
 

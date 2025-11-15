@@ -1,8 +1,11 @@
 package glue.Gachi_Sanchaek.pointLog.entity;
 
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,14 +46,15 @@ public class PointLog {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private String title;
+    @Enumerated(EnumType.STRING)
+    private WalkType type;
 
     private String location;
 
-    public PointLog(User user, Long amount, String title, String location){
+    public PointLog(User user, Long amount, WalkType type, String location){
         this.user = user;
         this.amount = amount;
-        this.title = title;
+        this.type = type;
         this.location = location;
     }
 }

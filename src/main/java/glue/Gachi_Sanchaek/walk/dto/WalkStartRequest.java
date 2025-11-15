@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.walk.dto;
 
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
@@ -8,5 +9,5 @@ import lombok.Builder;
 @NoArgsConstructor
 public class WalkStartRequest {
     private Long recommendationId;
-    private String walkType;
+    private WalkType walkType;
 }
