@@ -8,50 +8,54 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "CSV Export API", description = "기관별 QR 코드 데이터 CSV 파일 추출 API (관리자 TEST전용)")
+import java.nio.charset.StandardCharsets;
+
+@Tag(name = "QR Export API", description = "기관별 QR코드 이미지 추출 API (관리자용)")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/admin")
+@RequestMapping("api/v1/admin/export-qr")
 public class QrExportController {
 
     private final QrExportService qrExportService;
 
-    @SecureOperation(summary = "단일 기관 QR 데이터 CSV 추출", description = "특정 기관의 payload 데이터를 CSV 파일 형식으로 내보냅니다.")
-    @GetMapping(value = "/export-organization-csv")
-    public ResponseEntity<?> exportOrganizationCsv(
-            @Parameter(description = "CSV 추출을 원하는 기관의 고유 ID")
+    @SecureOperation(summary = "단일 기관 QR 이미지 추출", description = "특정 기관의 payload 값으로 생성된 QR 코드를 PNG 이미지로 다운로드합니다.")
+    @GetMapping(value = "/organization/image")
+    public ResponseEntity<?> exportOrganizationQr(
+            @Parameter(description = "Qr 이미지 추출할 기관의 고유 ID")
             @RequestParam(value = "orgId") Long organizationId
     ){
-        log.info("CSV 추출 요청 시작. 요청된 단일 기관 ID: {}", organizationId);
+        log.info("QR 이미지 추출 요청 시작. 기관 ID: {}", organizationId);
 
         try {
-            String csvData = qrExportService.exportOrganizationToCsv(organizationId);
+            byte[] qrImageBytes = qrExportService.exportOrganizationToQrImage(organizationId);
 
-            String fileName = "organization_" + organizationId + "_payload.csv";
+            String fileName = "organization_" + organizationId + "_qr.png";
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentDispositionFormData("attachment", fileName);
-            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8");
+            headers.setContentType(MediaType.IMAGE_PNG);
 
-            return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
+            headers.setContentDisposition(
+                    ContentDisposition.attachment()
+                            .filename(fileName, StandardCharsets.UTF_8)
+                            .build()
+            );
+
+            return new ResponseEntity<>(qrImageBytes, headers, HttpStatus.OK);
 
         } catch (IllegalArgumentException e) {
-
-            log.warn("CSV 추출 실패 (기관 ID 찾을 수 없음): {}", organizationId);
+            log.warn("QR 추출 실패 (잘못된 기관 ID 또는 payload 값 없음): {}", organizationId);
             return ApiResponse.badRequest(e.getMessage());
 
         } catch (Exception e) {
-            log.error("CSV 데이터 추출 중 치명적인 오류 발생. ID: {}", organizationId, e);
-            return ApiResponse.internalServerError("CSV 데이터 추출 중 서버 오류 발생");
+            log.error("QR 이미지 생성 중 서버 오류 발생. 기관 ID: {}", organizationId, e);
+            return ApiResponse.internalServerError("QR 이미지 생성 중 서버 오류가 발생했습니다.");
         }
     }
 }
