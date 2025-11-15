@@ -4,3 +4,10 @@ spring:
       - classpath:config/mysql.yaml
       - classpath:config/env.yaml
       - classpath:config/bonggong-images.yaml
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  forward-headers-strategy: framework

@@ -1,5 +1,8 @@
 package glue.Gachi_Sanchaek.walk.service;
 
+import glue.Gachi_Sanchaek.organization.entity.Organization;
+import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
+import glue.Gachi_Sanchaek.organization.service.OrganizationService;
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.ranking.service.RankingService;
 import glue.Gachi_Sanchaek.user.entity.User;
@@ -18,27 +21,26 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RewardService {
     private final WalkRecordRepository walkRecordRepository;
-    private final WalkRecommendationRepository walkRecommendationRepository;
+    private final OrganizationService organizationService;
     private final UserService userService;
     private final PointLogService pointLogService;
     private final RankingService rankingService;
 
     //산책 종료 공통 로직
     public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message,
-                                        Double totalDistance, Integer totalMinutes){
+                                        Double totalDistance, Integer totalSeconds){
 
-        Long reward = Long.valueOf(calculateReward(walk.getWalkType(),totalDistance));
+        Long reward = Long.valueOf(calculateReward(walk,totalDistance));
 
         //인증 성공 시 - WalkRecord 업데이트
         walk.setStatus(WalkStatus.FINISHED);
         walk.setEndTime(LocalDateTime.now());
         walk.setTotalDistance(totalDistance);
-        walk.setTotalTime(totalMinutes);
+        walk.setTotalTime(totalSeconds);
         walkRecordRepository.save(walk);
 
         User user = userService.findById(userId);
-        userService.recordWalkingResult(userId,reward);
-        Long walkingCount = userService.findById(userId).getWalkingCount();
+        Long walkingCount = user.getWalkingCount();
 
         processAfterWalk(userId,walk,reward);
 
@@ -47,7 +49,7 @@ public class RewardService {
                 .status(WalkStatus.FINISHED)
                 .nickname(user.getNickname())
                 .totalDistance(totalDistance)
-                .totalMinutes(totalMinutes)
+                .totalTime(formatSeconds(totalSeconds))
                 .pointsEarned(reward)
                 .walkingCount(walkingCount)
                 .message(message)
@@ -59,20 +61,12 @@ public class RewardService {
     private void processAfterWalk(Long userId, WalkRecord walk, long reward){
         //산책 타입
         String type = walk.getWalkType();
+        String upperWalkType = type.toUpperCase();
 
         //복지관,보호소 이름 가져오기
-        String locationName = "NORMAL";
-        if(walk.getWalkRecommendationId() != null){
-            locationName = walkRecommendationRepository.findById(walk.getWalkRecommendationId())
-                    .map(rec -> {
-                        if(rec.getOrganization()!=null){
-                            return rec.getOrganization().getName();
-                        }
-                        else{
-                            return "NORMAL";
-                        }
-                    })
-                    .orElse("NORMAL");
+        String locationName = "";
+        if(upperWalkType.equals("SENIOR") || upperWalkType.equals("DOG")){
+            locationName = organizationService.getLocationName(userId);
         }
 
         //후처리 호출 : 포인트 및 순위 갱신
@@ -82,17 +76,31 @@ public class RewardService {
     }
 
     // 리워드 계산
-    private int calculateReward(String walkType, double distanceKm){
+    private int calculateReward(WalkRecord walk, double distanceKm){
         //거리 기반 기본 포인트 : 1km당 100점 (반올림)
         int basePoints = (int)Math.round(distanceKm*100);
 
         //산책 타입에 따른 추가 포인트
-        int bonusPoints = switch(walkType.toUpperCase()){
+        int bonusPoints = switch(walk.getWalkType().toUpperCase()){
             case "SENIOR" -> 400;
             case "DOG" -> 300;
-            case "PLOGGING" -> 200;
+            case "PLOGGING" -> {
+                if(Boolean.TRUE.equals(walk.getPloggingVerified())){
+                    yield 200;
+                }
+                else{
+                    yield 0;
+                }
+            }
             default -> 0;
         };
         return basePoints + bonusPoints;
+    }
+
+    //산책 시간 계산
+    private String formatSeconds(Integer totalSeconds){
+        int minutes = totalSeconds/60;
+        int seconds = totalSeconds % 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }
