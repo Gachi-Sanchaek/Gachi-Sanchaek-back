@@ -25,7 +25,7 @@ public class RewardService {
 
     //산책 종료 공통 로직
     public WalkEndResponse finalizeWalk(Long userId, WalkRecord walk, String message,
-                                        Double totalDistance, Integer totalMinutes){
+                                        Double totalDistance, Integer totalSeconds){
 
         Long reward = Long.valueOf(calculateReward(walk,totalDistance));
 
@@ -33,11 +33,11 @@ public class RewardService {
         walk.setStatus(WalkStatus.FINISHED);
         walk.setEndTime(LocalDateTime.now());
         walk.setTotalDistance(totalDistance);
-        walk.setTotalTime(totalMinutes);
+        walk.setTotalTime(totalSeconds);
         walkRecordRepository.save(walk);
 
         User user = userService.findById(userId);
-        Long walkingCount = userService.findById(userId).getWalkingCount();
+        Long walkingCount = user.getWalkingCount();
 
         processAfterWalk(userId,walk,reward);
 
@@ -46,7 +46,7 @@ public class RewardService {
                 .status(WalkStatus.FINISHED)
                 .nickname(user.getNickname())
                 .totalDistance(totalDistance)
-                .totalMinutes(totalMinutes)
+                .totalTime(formatSeconds(totalSeconds))
                 .pointsEarned(reward)
                 .walkingCount(walkingCount)
                 .message(message)
@@ -100,5 +100,12 @@ public class RewardService {
             default -> 0;
         };
         return basePoints + bonusPoints;
+    }
+
+    //산책 시간 계산
+    private String formatSeconds(Integer totalSeconds){
+        int minutes = totalSeconds/60;
+        int seconds = totalSeconds % 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }

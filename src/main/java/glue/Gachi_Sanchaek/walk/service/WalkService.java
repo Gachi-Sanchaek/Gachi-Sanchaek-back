@@ -23,7 +23,7 @@ public class WalkService {
     public WalkEndResponse endWalk(Long userId, WalkEndRequest request) {
         WalkRecord walk = walkRecordService.getWalkOrThrow(request.getWalkId());
         return rewardService.finalizeWalk(userId, walk, "산책 종료 완료",
-                request.getTotalDistance(), request.getTotalMinutes());
+                request.getTotalDistance(), request.getTotalSeconds());
     }
 
     public VerificationResponse verifyQr(Long userId, VerificationRequest request) {

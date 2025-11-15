@@ -5,14 +5,11 @@ import glue.Gachi_Sanchaek.user.service.UserService;
 import glue.Gachi_Sanchaek.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.walk.dto.WalkStartRequest;
 import glue.Gachi_Sanchaek.walk.entity.WalkRecord;
-import glue.Gachi_Sanchaek.walk.enums.QrStage;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
 import glue.Gachi_Sanchaek.walk.enums.WalkStatus;
 import glue.Gachi_Sanchaek.walk.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 
 @Service
