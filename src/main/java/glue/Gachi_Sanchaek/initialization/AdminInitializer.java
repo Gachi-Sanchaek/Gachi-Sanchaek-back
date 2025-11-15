@@ -2,6 +2,7 @@ package glue.Gachi_Sanchaek.initialization;
 
 import glue.Gachi_Sanchaek.login.dto.UserJoinDto;
 import glue.Gachi_Sanchaek.login.service.TokenService;
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
 import glue.Gachi_Sanchaek.ranking.service.RankingService;
 import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
@@ -36,7 +37,7 @@ public class AdminInitializer {
         //즈에 포인트 로그 생성
         for(int i=0;i<10;i++){
             userService.recordWalkingResult(user.getId(), 500L);
-            pointLogService.save(user, 500L, "유기견 산책 봉사", "부천 유기견 센터");
+            pointLogService.save(user, 500L, WalkType.DOG, "부천 유기견 센터");
             rankingService.updateRanking(user.getId(), 500L);
         }
 

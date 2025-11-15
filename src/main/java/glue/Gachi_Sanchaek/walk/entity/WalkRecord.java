@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.walk.entity;
 
+import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
 import glue.Gachi_Sanchaek.user.entity.User;
 import glue.Gachi_Sanchaek.walk.enums.QrStage;
 import glue.Gachi_Sanchaek.walk.enums.VerificationMethod;
@@ -30,7 +31,8 @@ public class WalkRecord {
     private Long walkRecommendationId;
 
     @Column(name="walk_type",nullable = false)
-    private String walkType;
+    @Enumerated(EnumType.STRING)
+    private WalkType walkType;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
