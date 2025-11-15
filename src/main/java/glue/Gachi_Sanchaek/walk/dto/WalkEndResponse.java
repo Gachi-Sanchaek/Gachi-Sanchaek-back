@@ -11,7 +11,7 @@ public class WalkEndResponse {
     private WalkStatus status;
     private String nickname;
     private Double totalDistance;
-    private Integer totalMinutes;
+    private String totalTime;
     private Long pointsEarned;
     private Long walkingCount;
     private String message;
