@@ -52,6 +52,10 @@ dependencies {
 
     /* Gemini */
     implementation 'io.projectreactor.addons:reactor-extra'
+
+    /* QRcode */
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.zxing:javase:3.5.3'
 }
 
 tasks.named('test') {
