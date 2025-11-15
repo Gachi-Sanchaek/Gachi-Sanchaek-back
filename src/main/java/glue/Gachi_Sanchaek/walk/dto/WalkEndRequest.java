@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 public class WalkEndRequest {
     private Long walkId;
     private Double totalDistance;
-    private Integer totalMinutes;
+    private Integer totalSeconds;
 }
