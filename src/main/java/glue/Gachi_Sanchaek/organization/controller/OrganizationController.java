@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.organization.controller;
 
+import glue.Gachi_Sanchaek.docs.SecureOperation;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
 import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
 import glue.Gachi_Sanchaek.organization.service.KakaoMapService;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name ="기관 관리 (Organization)", description ="주변 기관 검색 및 저장 API")
+@Tag(name ="Organization API", description ="주변 기관 검색 및 저장 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/organizations")
@@ -27,7 +28,7 @@ public class OrganizationController {
     private final OrganizationSearchService organizationSearchService;
     private final OrganizationService organizationService;
 
-    @Operation(summary = "주변 기관 검색", description = "사용자 위치를 기반으로 특정 반경 내 기관을 검색합니다.")
+    @SecureOperation(summary = "주변 기관 검색", description = "사용자 위치를 기반으로 특정 반경 내 기관을 검색합니다.")
     @GetMapping("/nearby")
     public ResponseEntity<ApiResponse<List<OrganizationDTO>>> searchNearby(
             @AuthenticationPrincipal
@@ -51,7 +52,7 @@ public class OrganizationController {
         return ApiResponse.ok(result);
     }
 
-    @Operation(summary = "기관 선택 및 저장", description = "사용자가 특정 기관을 선택하고, 해당 정보를 저장합니다.")
+    @SecureOperation(summary = "기관 선택 및 저장", description = "사용자가 특정 기관을 선택하고, 해당 정보를 저장합니다.")
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<OrganizationResponse>> selectOrganization(
             @AuthenticationPrincipal @Parameter(hidden = true)CustomUserDetails userDetails,

@@ -1,5 +1,6 @@
 package glue.Gachi_Sanchaek.walkRecommendation.controller;
 
+import glue.Gachi_Sanchaek.docs.SecureOperation;
 import glue.Gachi_Sanchaek.util.ApiResponse;
 import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
 import glue.Gachi_Sanchaek.walkRecommendation.dto.SaveWalkRouteResponse;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static glue.Gachi_Sanchaek.util.ApiResponse.ok;
 
-@Tag(name = "산책 경로 추천 및 저장", description = "사용자의 위치 및 설정에 기반한 산책 경로 추천 및 저장 API")
+@Tag(name = "WalkRecommend API", description = "사용자의 위치에 기반한 산책 경로 추천 및 저장 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/routes")
@@ -24,7 +25,7 @@ public class WalkRecommendationController {
     private final WalkRecommendationService walkRecommendationService;
 
 
-    @Operation(summary = "산책 경로 추천", description = "사용자의 현재 위치나, 기관위치를 바탕으로 원하는 산책 시간에 맞춰 추천 경로 목록(3개)을 제공합니다.")
+    @SecureOperation(summary = "AI 산책 경로 추천", description = "사용자의 현재 위치나, 기관위치를 바탕으로 원하는 산책 시간에 맞춰 추천 경로 목록(3개)을 제공합니다.")
     @GetMapping("/recommend")
     public ResponseEntity<ApiResponse<WalkRecommendationGroupResponse>> getRecommend(
             @AuthenticationPrincipal @Parameter(hidden = true) CustomUserDetails userDetails,
@@ -44,7 +45,7 @@ public class WalkRecommendationController {
         return ok(recommendedRoutes);
     }
 
-    @Operation(summary = "추천 경로 선택 및 저장", description = "사용자가 추천된 경로 중 하나를 선택하고, 해당 경로를 저장합니다.")
+    @SecureOperation(summary = "추천 경로 선택 및 저장", description = "사용자가 추천된 경로 중 하나를 선택하고, 해당 경로를 저장합니다.")
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<SaveWalkRouteResponse>> saveRoute(
             @AuthenticationPrincipal @Parameter(hidden = true) CustomUserDetails userDetails,
