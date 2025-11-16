@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth // 특정 경로에 대한 권한 설정
                         .requestMatchers("/h2-console/**").permitAll() //h2
                         .requestMatchers("/api/v1/auth/kakao/login/**").permitAll() //로그인
+                        .requestMatchers("/bonggong/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger
                         .requestMatchers("/api/v1/admin/export-qr/organization/image").permitAll() // ??
                         .anyRequest().authenticated())
