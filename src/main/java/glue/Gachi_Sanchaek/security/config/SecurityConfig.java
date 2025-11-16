@@ -21,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -47,9 +48,10 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests((auth) -> auth // 특정 경로에 대한 권한 설정
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/**").permitAll()
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll() //h2
+                        .requestMatchers("/api/v1/auth/kakao/login/**").permitAll() //로그인
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger
+                        .requestMatchers("/api/v1/admin/export-qr/organization/image").permitAll() // ??
                         .anyRequest().authenticated())
 
                 .sessionManagement((session) -> session
