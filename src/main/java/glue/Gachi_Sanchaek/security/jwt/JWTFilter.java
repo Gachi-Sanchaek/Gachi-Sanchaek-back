@@ -26,7 +26,7 @@ public class JWTFilter extends OncePerRequestFilter {
     private final List<String> EXCLUDED_PATHS = List.of(
             "/api/v1/auth",
             "/h2-console",
-            "/bonggong",
+//            "/bonggong",
             "/swagger-ui",
             "/v3/api-docs",
             "/api/v1/admin/export-qr/organization/image"
