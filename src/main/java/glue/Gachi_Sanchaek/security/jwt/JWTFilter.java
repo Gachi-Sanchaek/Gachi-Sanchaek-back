@@ -66,14 +66,15 @@ public class JWTFilter extends OncePerRequestFilter {
                     customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            filterChain.doFilter(request, response);
+//            filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             log.warn("JWT token has expired: {}", e.getMessage());
-            throw new BadCredentialsException("JWT token has expired.");
+            request.setAttribute("exception", "TOKEN_EXPIRED");
         } catch (JwtException e){
             log.warn("Invalid JWT token: {}", e.getMessage());
-            throw new BadCredentialsException("Invalid JWT token.");
+            request.setAttribute("exception", "INVALID_TOKEN");
         }
+        filterChain.doFilter(request, response);
     }
 
     private boolean isHeaderInvalid(String authorization) {
