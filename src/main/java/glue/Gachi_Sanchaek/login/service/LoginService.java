@@ -39,7 +39,7 @@ public class LoginService {
     private LoginResult kakaoLogin(KakaoUserInfoResponseDto userInfo) {
         Optional<User> userOpt = userService.findByKakaoId(userInfo.getId());
 
-        if (userOpt.isEmpty()) {
+        if (userOpt.isEmpty() || userOpt.get().isDeleted()) {
             User newUser = userService.registerInitialUser(new UserJoinDto(userInfo));
             return new LoginResult(newUser, true);
         }

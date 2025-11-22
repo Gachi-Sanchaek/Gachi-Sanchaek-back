@@ -58,10 +58,18 @@ public class User {
     @Builder.Default
     private Long walkingCount = 0L;
 
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
+
     public User(UserJoinDto userJoinDto) {
         this();
         this.kakaoId = userJoinDto.getKakaoId();
         this.nickname = userJoinDto.getUsername();
+    }
+
+    public void deleteUser(){
+        this.deleted = true;
     }
 
     public void applyJoinInfo(String nickname, String gender) {

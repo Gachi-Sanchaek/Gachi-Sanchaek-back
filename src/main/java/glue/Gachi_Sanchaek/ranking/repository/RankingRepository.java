@@ -24,6 +24,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             FROM rankings r
             JOIN users u ON u.id = r.user_id
             WHERE r.rank_period = :period
+                AND u.is_deleted = false
         )
     """;
 
