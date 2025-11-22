@@ -18,7 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User findById(Long userId){
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not Found. userId = " + userId));
     }
 
@@ -29,7 +29,7 @@ public class UserService {
     @Transactional
     public void delete(Long userId){
         User user = findById(userId);
-        userRepository.delete(user);
+        user.deleteUser();
     }
 
     public boolean isAvailableNickname(String nickname){
