@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,5 +68,14 @@ public class UserController {
     ){
         User user = userService.update(userDetails.getUserId(),requestDto);
         return ApiResponse.ok(new UserResponseDto(user));
+    }
+
+    @SecureOperation(summary = "회원 탈퇴", description = "현재 로그인된 사용자의 계정을 삭제합니다.")
+    @DeleteMapping("/me")
+    public ResponseEntity<ApiResponse<Void>> deleteMyAccount(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        userService.delete(userDetails.getUserId());
+        return ApiResponse.ok(null);
     }
 }
