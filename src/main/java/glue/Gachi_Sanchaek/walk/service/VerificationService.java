@@ -88,7 +88,7 @@ public class VerificationService {
         int trashCount = geminiWalkService.countTrashImage(image);
 
         //실패한경우
-        if (trashCount < 10) {
+        if (trashCount < 5) {
             return new VerificationResponse(walk.getId(),
                     false, "플로깅 인증하기에 쓰레기가 부족합니다. (" + trashCount + "개 감지)");
         }
