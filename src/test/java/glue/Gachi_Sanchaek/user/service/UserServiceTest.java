@@ -56,7 +56,7 @@ class UserServiceTest {
         void findById_Success() {
             // given
             Long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
 
             // when
             User foundUser = userService.findById(userId);
@@ -71,7 +71,7 @@ class UserServiceTest {
         void findById_Fail_UserNotFound() {
             // given
             Long nonExistingUserId = 99L;
-            when(userRepository.findById(nonExistingUserId)).thenReturn(Optional.empty());
+            when(userRepository.findByIdAndDeletedFalse(nonExistingUserId)).thenReturn(Optional.empty());
 
             // when & then
             assertThrows(UserNotFoundException.class, () -> {
@@ -89,14 +89,13 @@ class UserServiceTest {
         void delete_Success() {
             // given
             Long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
 
             // when
             userService.delete(userId);
 
             // then
-            verify(userRepository, times(1)).findById(userId);
-            verify(userRepository, times(1)).delete(testUser);
+            verify(userRepository, times(1)).findByIdAndDeletedFalse(userId);
         }
 
         @Test
@@ -104,7 +103,7 @@ class UserServiceTest {
         void delete_Fail_UserNotFound() {
             // given
             Long nonExistingUserId = 99L;
-            when(userRepository.findById(nonExistingUserId)).thenReturn(Optional.empty());
+            when(userRepository.findByIdAndDeletedFalse(nonExistingUserId)).thenReturn(Optional.empty());
 
             // when & then
             assertThrows(UserNotFoundException.class, () -> {
@@ -158,7 +157,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             UserJoinRequestDto requestDto = new UserJoinRequestDto("가입닉네임", "MALE");
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
 
             // when
             User joinedUser = userService.completeRegistration(userId, requestDto);
@@ -179,7 +178,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             UserUpdateRequestDto requestDto = new UserUpdateRequestDto("수정된닉네임", bonggong2);
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
 
             // when
             User updatedUser = userService.update(userId, requestDto);
@@ -195,7 +194,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             UserUpdateRequestDto requestDto = new UserUpdateRequestDto("닉네임만수정", null);
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
             String originalImageUrl = testUser.getProfileImageUrl();
 
             // when
@@ -212,7 +211,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             UserUpdateRequestDto requestDto = new UserUpdateRequestDto(null, bonggong2);
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
             String originalNickname = testUser.getNickname();
 
             // when
@@ -229,7 +228,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             UserUpdateRequestDto requestDto = new UserUpdateRequestDto(" ", bonggong2); // 닉네임이 " "
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
             String originalNickname = testUser.getNickname();
 
             // when
@@ -251,7 +250,7 @@ class UserServiceTest {
             // given
             Long userId = 1L;
             Long reward = 100L;
-            when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+            when(userRepository.findByIdAndDeletedFalse(userId)).thenReturn(Optional.of(testUser));
 
             // when
             User userAfterFirstWalk = userService.recordWalkingResult(userId, reward);
