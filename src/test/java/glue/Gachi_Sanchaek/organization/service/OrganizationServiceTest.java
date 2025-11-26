@@ -1,14 +1,15 @@
 package glue.Gachi_Sanchaek.organization.service;
 
-import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
-import glue.Gachi_Sanchaek.organization.dto.OrganizationResponse;
-import glue.Gachi_Sanchaek.organization.entity.Organization;
-import glue.Gachi_Sanchaek.organization.entity.OrganizationCategory;
-import glue.Gachi_Sanchaek.organization.entity.UserOrganization;
-import glue.Gachi_Sanchaek.organization.repository.OrganizationRepository;
-import glue.Gachi_Sanchaek.organization.repository.UserOrganizationRepository;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.repository.UserRepository;
+import glue.Gachi_Sanchaek.domain.organization.dto.OrganizationDTO;
+import glue.Gachi_Sanchaek.domain.organization.dto.OrganizationResponse;
+import glue.Gachi_Sanchaek.domain.organization.entity.Organization;
+import glue.Gachi_Sanchaek.domain.organization.entity.OrganizationCategory;
+import glue.Gachi_Sanchaek.domain.organization.entity.UserOrganization;
+import glue.Gachi_Sanchaek.domain.organization.repository.OrganizationRepository;
+import glue.Gachi_Sanchaek.domain.organization.repository.UserOrganizationRepository;
+import glue.Gachi_Sanchaek.domain.organization.service.OrganizationService;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static glue.Gachi_Sanchaek.organization.service.OrganizationSearchService.SearchType;
+import static glue.Gachi_Sanchaek.domain.organization.service.OrganizationSearchService.SearchType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

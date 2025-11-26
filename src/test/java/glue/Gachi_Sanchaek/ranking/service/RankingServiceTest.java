@@ -1,10 +1,11 @@
 package glue.Gachi_Sanchaek.ranking.service;
 
-import glue.Gachi_Sanchaek.ranking.dto.RankingResponseDto;
-import glue.Gachi_Sanchaek.ranking.entity.Ranking;
-import glue.Gachi_Sanchaek.ranking.repository.RankingRepository;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.service.UserService;
+import glue.Gachi_Sanchaek.domain.ranking.dto.RankingResponseDto;
+import glue.Gachi_Sanchaek.domain.ranking.entity.Ranking;
+import glue.Gachi_Sanchaek.domain.ranking.repository.RankingRepository;
+import glue.Gachi_Sanchaek.domain.ranking.service.RankingService;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

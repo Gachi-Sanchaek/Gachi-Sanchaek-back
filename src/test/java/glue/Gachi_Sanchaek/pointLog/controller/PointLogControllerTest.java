@@ -12,13 +12,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import glue.Gachi_Sanchaek.pointLog.dto.PointLogResponseDto;
-import glue.Gachi_Sanchaek.pointLog.entity.PointLog;
-import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
-import glue.Gachi_Sanchaek.pointLog.service.PointLogService;
-import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.util.ApiResponse;
+import glue.Gachi_Sanchaek.domain.pointLog.controller.PointLogController;
+import glue.Gachi_Sanchaek.domain.pointLog.dto.PointLogResponseDto;
+import glue.Gachi_Sanchaek.domain.pointLog.entity.PointLog;
+import glue.Gachi_Sanchaek.domain.pointLog.enums.WalkType;
+import glue.Gachi_Sanchaek.domain.pointLog.service.PointLogService;
+import glue.Gachi_Sanchaek.common.security.jwt.CustomUserDetails;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.common.util.ApiResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

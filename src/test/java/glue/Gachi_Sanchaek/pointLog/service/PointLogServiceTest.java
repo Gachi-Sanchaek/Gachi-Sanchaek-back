@@ -1,10 +1,11 @@
 package glue.Gachi_Sanchaek.pointLog.service;
 
-import glue.Gachi_Sanchaek.pointLog.dto.PointLogResponseDto;
-import glue.Gachi_Sanchaek.pointLog.entity.PointLog;
-import glue.Gachi_Sanchaek.pointLog.enums.WalkType;
-import glue.Gachi_Sanchaek.pointLog.repository.PointLogRepository;
-import glue.Gachi_Sanchaek.user.entity.User;
+import glue.Gachi_Sanchaek.domain.pointLog.dto.PointLogResponseDto;
+import glue.Gachi_Sanchaek.domain.pointLog.entity.PointLog;
+import glue.Gachi_Sanchaek.domain.pointLog.enums.WalkType;
+import glue.Gachi_Sanchaek.domain.pointLog.repository.PointLogRepository;
+import glue.Gachi_Sanchaek.domain.pointLog.service.PointLogService;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,10 @@
 package glue.Gachi_Sanchaek.login.service;
 
-import glue.Gachi_Sanchaek.redis.service.RedisService;
-import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.service.UserService;
+import glue.Gachi_Sanchaek.common.redis.service.RedisService;
+import glue.Gachi_Sanchaek.common.security.jwt.JWTUtil;
+import glue.Gachi_Sanchaek.domain.login.service.TokenService;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
