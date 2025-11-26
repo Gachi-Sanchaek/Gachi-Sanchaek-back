@@ -1,0 +1,17 @@
+spring:
+  config:
+    import:
+      - classpath:config/h2.yaml
+      - classpath:config/env.yaml
+      - classpath:config/bonggong-images.yaml
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+  #        show_sql: true
+  #        format_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
