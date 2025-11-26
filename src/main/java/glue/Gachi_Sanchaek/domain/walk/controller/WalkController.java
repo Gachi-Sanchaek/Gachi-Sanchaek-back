@@ -9,7 +9,7 @@ import glue.Gachi_Sanchaek.domain.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.domain.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.domain.walk.dto.WalkStartRequest;
 import glue.Gachi_Sanchaek.common.util.ApiResponse;
-import glue.Gachi_Sanchaek.walk.dto.*;
+import glue.Gachi_Sanchaek.domain.walk.dto.*;
 import glue.Gachi_Sanchaek.domain.walk.service.WalkService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

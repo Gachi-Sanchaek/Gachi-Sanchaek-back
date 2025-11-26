@@ -6,7 +6,7 @@ import glue.Gachi_Sanchaek.domain.walk.dto.WalkEndRequest;
 import glue.Gachi_Sanchaek.domain.walk.dto.WalkEndResponse;
 import glue.Gachi_Sanchaek.domain.walk.dto.WalkResponse;
 import glue.Gachi_Sanchaek.domain.walk.dto.WalkStartRequest;
-import glue.Gachi_Sanchaek.walk.dto.*;
+import glue.Gachi_Sanchaek.domain.walk.dto.*;
 import glue.Gachi_Sanchaek.domain.walk.entity.WalkRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

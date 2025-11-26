@@ -12,7 +12,7 @@ import glue.Gachi_Sanchaek.domain.walkRecommendation.dto.WalkRouteSelectionReque
 import glue.Gachi_Sanchaek.domain.walkRecommendation.dto.Waypoint;
 import glue.Gachi_Sanchaek.domain.user.entity.User;
 import glue.Gachi_Sanchaek.domain.user.repository.UserRepository;
-import glue.Gachi_Sanchaek.walkRecommendation.dto.*;
+import glue.Gachi_Sanchaek.domain.walkRecommendation.dto.*;
 import glue.Gachi_Sanchaek.domain.walkRecommendation.entity.WalkRecommendation;
 import glue.Gachi_Sanchaek.domain.walkRecommendation.repository.WalkRecommendationRepository;
 import lombok.RequiredArgsConstructor;
