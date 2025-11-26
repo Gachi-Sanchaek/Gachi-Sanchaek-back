@@ -1,6 +1,8 @@
 package glue.Gachi_Sanchaek.organization.service;
 
-import glue.Gachi_Sanchaek.organization.dto.OrganizationDTO;
+import glue.Gachi_Sanchaek.domain.organization.dto.OrganizationDTO;
+import glue.Gachi_Sanchaek.domain.organization.service.KakaoMapService;
+import glue.Gachi_Sanchaek.domain.organization.service.OrganizationSearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

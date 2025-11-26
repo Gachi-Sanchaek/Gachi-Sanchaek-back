@@ -11,11 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.stamp.dto.StampResponseDto;
-import glue.Gachi_Sanchaek.stamp.entity.Stamp;
-import glue.Gachi_Sanchaek.stamp.service.StampService;
-import glue.Gachi_Sanchaek.util.ApiResponse;
+import glue.Gachi_Sanchaek.common.security.jwt.CustomUserDetails;
+import glue.Gachi_Sanchaek.domain.stamp.controller.StampController;
+import glue.Gachi_Sanchaek.domain.stamp.dto.StampResponseDto;
+import glue.Gachi_Sanchaek.domain.stamp.entity.Stamp;
+import glue.Gachi_Sanchaek.domain.stamp.service.StampService;
+import glue.Gachi_Sanchaek.common.util.ApiResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
