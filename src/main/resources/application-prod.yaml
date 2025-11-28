@@ -1,0 +1,6 @@
+spring:
+  config:
+    import:
+      - classpath:config/mysql.yaml
+      - classpath:config/env.yaml
+      - classpath:config/bonggong-images.yaml

@@ -16,8 +16,8 @@ public class InitializationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-//        stampInitializer.init();
-//        adminInitializer.init();
+        stampInitializer.init();
+        adminInitializer.init();
         log.info("Initialization complete.");
     }
 }
