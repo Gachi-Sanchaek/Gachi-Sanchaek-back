@@ -41,9 +41,7 @@ jobs:
           echo "KAKAO_LOGIN_CLIENT_ID=${{ secrets.KAKAO_LOGIN_CLIENT_ID }}" >> $GITHUB_ENV
           echo "KAKAO_LOGIN_REDIRECT_URI=${{ secrets.KAKAO_LOGIN_REDIRECT_URI }}" >> $GITHUB_ENV
           echo "KAKAO_MAP_API_KEY=${{ secrets.KAKAO_MAP_API_KEY }}" >> $GITHUB_ENV
-
-      - name: Create application.yaml
-        run: echo "${{ secrets.APPLICATION_YAML_TEST }}" > ./src/main/resources/application.yaml
+          echo "SPRING_PROFILE=${{ secrets.SPRING_PROFILE }}" >> $GITHUB_ENV
 
       - name: Build with Gradle Wrapper
         run: |
