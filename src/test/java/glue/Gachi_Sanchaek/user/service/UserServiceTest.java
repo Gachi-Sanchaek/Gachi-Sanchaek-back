@@ -1,10 +1,11 @@
 package glue.Gachi_Sanchaek.user.service;
 
-import glue.Gachi_Sanchaek.exception.UserNotFoundException;
-import glue.Gachi_Sanchaek.user.dto.UserJoinRequestDto;
-import glue.Gachi_Sanchaek.user.dto.UserUpdateRequestDto;
-import glue.Gachi_Sanchaek.user.entity.User;
-import glue.Gachi_Sanchaek.user.repository.UserRepository;
+import glue.Gachi_Sanchaek.common.exception.UserNotFoundException;
+import glue.Gachi_Sanchaek.domain.user.dto.UserJoinRequestDto;
+import glue.Gachi_Sanchaek.domain.user.dto.UserUpdateRequestDto;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.domain.user.repository.UserRepository;
+import glue.Gachi_Sanchaek.domain.user.service.UserService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -14,15 +14,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import glue.Gachi_Sanchaek.login.dto.LoginResponseDto;
-import glue.Gachi_Sanchaek.login.service.LoginService;
-import glue.Gachi_Sanchaek.security.CustomAccessDeniedHandler;
-import glue.Gachi_Sanchaek.security.CustomAuthenticationEntryPoint;
-import glue.Gachi_Sanchaek.security.config.SecurityConfig;
-import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
-import glue.Gachi_Sanchaek.security.jwt.JWTUtil;
-import glue.Gachi_Sanchaek.user.entity.User;
-import jakarta.servlet.ServletException;
+import glue.Gachi_Sanchaek.domain.login.controller.LoginController;
+import glue.Gachi_Sanchaek.domain.login.dto.LoginResponseDto;
+import glue.Gachi_Sanchaek.domain.login.service.LoginService;
+import glue.Gachi_Sanchaek.common.security.CustomAccessDeniedHandler;
+import glue.Gachi_Sanchaek.common.security.CustomAuthenticationEntryPoint;
+import glue.Gachi_Sanchaek.common.security.config.SecurityConfig;
+import glue.Gachi_Sanchaek.common.security.jwt.CustomUserDetails;
+import glue.Gachi_Sanchaek.common.security.jwt.JWTUtil;
+import glue.Gachi_Sanchaek.domain.user.entity.User;
 import jakarta.servlet.http.Cookie;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

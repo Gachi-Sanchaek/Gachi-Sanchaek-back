@@ -2,7 +2,6 @@ package glue.Gachi_Sanchaek.ranking.controller;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -13,9 +12,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import glue.Gachi_Sanchaek.ranking.dto.RankingResponseDto;
-import glue.Gachi_Sanchaek.ranking.service.RankingService;
-import glue.Gachi_Sanchaek.security.jwt.CustomUserDetails;
+import glue.Gachi_Sanchaek.domain.ranking.controller.RankingController;
+import glue.Gachi_Sanchaek.domain.ranking.dto.RankingResponseDto;
+import glue.Gachi_Sanchaek.domain.ranking.service.RankingService;
+import glue.Gachi_Sanchaek.common.security.jwt.CustomUserDetails;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

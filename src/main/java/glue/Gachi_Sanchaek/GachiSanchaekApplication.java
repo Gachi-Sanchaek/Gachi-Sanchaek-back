@@ -1,6 +1,6 @@
 package glue.Gachi_Sanchaek;
 
-import glue.Gachi_Sanchaek.stamp.config.BonggongProperties;
+import glue.Gachi_Sanchaek.domain.stamp.config.BonggongProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
