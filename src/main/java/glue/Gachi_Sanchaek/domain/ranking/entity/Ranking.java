@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -19,7 +20,9 @@ import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "rankings")
+@Table(name = "rankings", indexes = {
+        @Index(name = "idx_rankings_covering", columnList = "rank_period, point DESC, updated_at, user_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
