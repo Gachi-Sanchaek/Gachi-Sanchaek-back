@@ -11,13 +11,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class InitializationRunner implements ApplicationRunner {
 
-    private final StampInitializer stampInitializer;
-    private final AdminInitializer adminInitializer;
+    private final UserInit userInit;
 
     @Override
     public void run(ApplicationArguments args) {
-        stampInitializer.init();
-        adminInitializer.init();
+//        userInit.init();
         log.info("Initialization complete.");
     }
 }
