@@ -6,8 +6,15 @@ import glue.Gachi_Sanchaek.domain.user.dto.UserJoinRequestDto;
 import glue.Gachi_Sanchaek.domain.user.dto.UserUpdateRequestDto;
 import glue.Gachi_Sanchaek.domain.user.entity.User;
 import glue.Gachi_Sanchaek.domain.user.repository.UserRepository;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     public User findById(Long userId){
         return userRepository.findByIdAndDeletedFalse(userId)

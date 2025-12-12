@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+//@Profile("dev")
 public class StampInitializer {
 
     private static final String STAMP_RESOURCE_PATH = "classpath:/static/bonggong/*";
