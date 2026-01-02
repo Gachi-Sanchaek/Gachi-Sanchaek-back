@@ -4,3 +4,6 @@ spring:
       - classpath:config/mysql.yaml
       - classpath:config/env.yaml
       - classpath:config/bonggong-images.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
