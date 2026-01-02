@@ -4,6 +4,7 @@ import glue.Gachi_Sanchaek.domain.ranking.dto.RankingResponseDto;
 import glue.Gachi_Sanchaek.domain.ranking.entity.Ranking;
 import glue.Gachi_Sanchaek.domain.ranking.repository.RankingRepository;
 import glue.Gachi_Sanchaek.domain.user.entity.User;
+import glue.Gachi_Sanchaek.domain.user.repository.UserRepository;
 import glue.Gachi_Sanchaek.domain.user.service.UserService;
 import glue.Gachi_Sanchaek.common.util.DateUtil;
 import java.util.List;
@@ -30,7 +31,7 @@ public class RankingService {
         int period = DateUtil.getTodayYYYYMMW();
         Ranking ranking = rankingRepository.findByRankPeriodAndUserId(period, userId)
                 .orElseGet(()->{
-                    User user = userService.findById(userId);
+                    User user = userService.getUserReference(userId);
                     return new Ranking(user, 0L, period);
                 });
         ranking.addPoint(reward);

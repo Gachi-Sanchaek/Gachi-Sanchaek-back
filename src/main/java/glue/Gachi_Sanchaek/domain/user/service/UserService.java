@@ -30,6 +30,10 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not Found. userId = " + userId));
     }
 
+    public User getUserReference(Long userId){
+        return userRepository.getReferenceById(userId);
+    }
+
     public Optional<User> findByKakaoId(Long kakaoId){
         return userRepository.findByKakaoId(kakaoId);
     }

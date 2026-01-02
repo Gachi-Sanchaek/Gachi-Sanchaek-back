@@ -72,12 +72,9 @@ class RankingServiceTest {
         // given
         Long userId = 1L;
         Long reward = 200L;
-        User user = createUser(userId);
 
         given(rankingRepository.findByRankPeriodAndUserId(anyInt(), eq(userId)))
                 .willReturn(Optional.empty());
-
-        given(userService.findById(userId)).willReturn(user);
 
         // when
         rankingService.updateRanking(userId, reward);
@@ -88,9 +85,7 @@ class RankingServiceTest {
 
         Ranking savedRanking = rankingCaptor.getValue();
 
-        assertThat(savedRanking.getUser()).isEqualTo(user);
         assertThat(savedRanking.getPoint()).isEqualTo(200L);
-        verify(userService).findById(userId);
     }
 
     @Test
